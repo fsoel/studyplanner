@@ -1,0 +1,462 @@
+[
+  {
+    "id": "computer-science-bsc-2022",
+    "name": "B.Sc. Computer Science (2022)",
+    "totalCp": 180,
+    "categories": [
+      {
+        "id": "cat-practical",
+        "name": "Praktische Informatik",
+        "color": "bg-yellow-200 text-yellow-900 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-200 dark:border-yellow-800"
+      },
+      {
+        "id": "cat-technical",
+        "name": "Technische Informatik",
+        "color": "bg-lime-200 text-lime-900 border-lime-300 dark:bg-lime-900/40 dark:text-lime-200 dark:border-lime-800"
+      },
+      {
+        "id": "cat-theoretical",
+        "name": "Theoretische Informatik",
+        "color": "bg-blue-200 text-blue-900 border-blue-300 dark:bg-blue-900/40 dark:text-blue-200 dark:border-blue-800"
+      },
+      {
+        "id": "cat-mathematics",
+        "name": "Mathematik",
+        "color": "bg-red-200 text-red-900 border-red-300 dark:bg-red-900/40 dark:text-red-200 dark:border-red-800"
+      },
+      {
+        "id": "cat-other",
+        "name": "Sonstige Leistungen",
+        "color": "bg-teal-200 text-teal-900 border-teal-300 dark:bg-teal-900/40 dark:text-teal-200 dark:border-teal-800",
+        "subCategories": [
+          {
+            "id": "cat-other-ntw",
+            "name": "Nicht-technisches Wahlfach",
+            "minElectiveCp": 4,
+            "maxElectiveCp": 4
+          }
+        ]
+      },
+      {
+        "id": "cat-electives",
+        "name": "Wahlpflichtbereich",
+        "color": "bg-purple-200 text-purple-900 border-purple-300 dark:bg-purple-900/40 dark:text-purple-200 dark:border-purple-800",
+        "minElectiveCp": 36,
+        "maxElectiveCp": 36,
+        "subCategories": [
+          {
+            "id": "cat-electives-sub",
+            "name": "Wahlpflichtbereich",
+            "minElectiveCp": 18,
+            "maxElectiveCp": 24
+          },
+          {
+            "id": "cat-electives-applied",
+            "name": "Anwendungsbereich",
+            "minElectiveCp": 12,
+            "maxElectiveCp": 18
+          }
+        ]
+      },
+      {
+        "id": "cat-thesis",
+        "name": "Bachelorarbeit",
+        "color": "bg-pink-200 text-pink-900 border-pink-300 dark:bg-pink-900/40 dark:text-pink-200 dark:border-pink-800"
+      }
+    ],
+    "modules": [
+      {
+        "id": "mod-progra",
+        "name": "Programmierung",
+        "cp": 8,
+        "categoryId": "cat-practical",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-dsal",
+        "name": "Datenstrukturen und Algorithmen",
+        "cp": 7,
+        "categoryId": "cat-practical",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-swt",
+        "name": "Softwaretechnik",
+        "cp": 6,
+        "categoryId": "cat-practical",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-dbis",
+        "name": "Datenbanken und Informationssysteme",
+        "cp": 6,
+        "categoryId": "cat-practical",
+        "semesterId": "sem-4",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-ml",
+        "name": "Elements of Machine Learning and Data Science",
+        "cp": 6,
+        "categoryId": "cat-practical",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-ti",
+        "name": "Einführung in die Technische Informatik",
+        "cp": 6,
+        "categoryId": "cat-technical",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-bus",
+        "name": "Betriebssysteme und Systemsoftware",
+        "cp": 7,
+        "categoryId": "cat-technical",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-datkom",
+        "name": "Datenkommunikation",
+        "cp": 6,
+        "categoryId": "cat-technical",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-psp",
+        "name": "Systemprogrammierung",
+        "cp": 8,
+        "categoryId": "cat-technical",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-its",
+        "name": "IT-Sicherheit",
+        "cp": 4,
+        "categoryId": "cat-technical",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-fosap",
+        "name": "Formale Sprachen, Automaten und Prozesse",
+        "cp": 6,
+        "categoryId": "cat-theoretical",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-buk",
+        "name": "Berechenbarkeit und Komplexität",
+        "cp": 7,
+        "categoryId": "cat-theoretical",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-malo",
+        "name": "Mathematische Logik I",
+        "cp": 7,
+        "categoryId": "cat-theoretical",
+        "semesterId": "sem-4",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-ds",
+        "name": "Diskrete Strukturen",
+        "cp": 6,
+        "categoryId": "cat-mathematics",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-afi",
+        "name": "Analysis für Informatiker",
+        "cp": 8,
+        "categoryId": "cat-mathematics",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-la",
+        "name": "Lineare Algebra für Informatiker",
+        "cp": 6,
+        "categoryId": "cat-mathematics",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-eas",
+        "name": "Einführung in die angewandte Stochastik",
+        "cp": 6,
+        "categoryId": "cat-mathematics",
+        "semesterId": "sem-4",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-mentoring",
+        "name": "Mentoring Informatik",
+        "cp": 1,
+        "categoryId": "cat-other",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-proseminar",
+        "name": "Einführung in das wissenschaftliche Arbeiten (Proseminar Informatik)",
+        "cp": 4,
+        "categoryId": "cat-other",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-spp",
+        "name": "Software-Projektpraktikum",
+        "cp": 6,
+        "categoryId": "cat-other",
+        "semesterId": "sem-4",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-seminar",
+        "name": "Seminar Informatik",
+        "cp": 4,
+        "categoryId": "cat-other",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "mod-ntw",
+        "name": "Nicht-technisches Wahlfach",
+        "cp": 4,
+        "categoryId": "cat-other",
+        "subCategoryId": "cat-other-ntw",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-electives-theory",
+        "name": "Theoretisches Wahlpflichtmodul",
+        "cp": 6,
+        "categoryId": "cat-electives",
+        "subCategoryId": "cat-electives-sub",
+        "semesterId": "sem-4",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-electives-1",
+        "name": "Wahlpflichtmodul 1",
+        "cp": 6,
+        "categoryId": "cat-electives",
+        "subCategoryId": "cat-electives-sub",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-electives-2",
+        "name": "Wahlpflichtmodul 2",
+        "cp": 6,
+        "categoryId": "cat-electives",
+        "subCategoryId": "cat-electives-sub",
+        "semesterId": "sem-6",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-electives-3",
+        "name": "Wahlpflichtmodul 3",
+        "cp": 6,
+        "categoryId": "cat-electives",
+        "subCategoryId": "cat-electives-sub",
+        "semesterId": "sem-6",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-electives-applied-1",
+        "name": "Anwendungsfach Wahlpflichtmodul 1",
+        "cp": 6,
+        "categoryId": "cat-electives",
+        "subCategoryId": "cat-electives-applied",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-electives-applied-2",
+        "name": "Anwendungsfach Wahlpflichtmodul 2",
+        "cp": 6,
+        "categoryId": "cat-electives",
+        "subCategoryId": "cat-electives-applied",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "mod-thesis",
+        "name": "Bachelorarbeit",
+        "cp": 15,
+        "categoryId": "cat-thesis",
+        "semesterId": "sem-6",
+        "isPassed": false,
+        "isElective": false
+      }
+    ]
+  },
+  {
+    "id": "mathematics-bsc",
+    "name": "B.Sc. Mathematics",
+    "totalCp": 180,
+    "categories": [
+      {
+        "id": "cat-core-math",
+        "name": "Core Mathematics",
+        "color": "bg-red-200 text-red-900 border-red-300 dark:bg-red-900/40 dark:text-red-200 dark:border-red-800"
+      },
+      {
+        "id": "cat-applied-math",
+        "name": "Applied Mathematics",
+        "color": "bg-yellow-200 text-yellow-900 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-200 dark:border-yellow-800"
+      },
+      {
+        "id": "cat-minor",
+        "name": "Minor Subject (Electives)",
+        "color": "bg-indigo-200 text-indigo-900 border-indigo-300 dark:bg-indigo-900/40 dark:text-indigo-200 dark:border-indigo-800",
+        "minElectiveCp": 24,
+        "maxElectiveCp": 24,
+        "subCategories": [
+          {
+            "id": "cat-minor-core",
+            "name": "Minor Core",
+            "minElectiveCp": 12,
+            "maxElectiveCp": 18
+          },
+          {
+            "id": "cat-minor-specialization",
+            "name": "Minor Specialization",
+            "maxElectiveCp": 12
+          }
+        ]
+      }
+    ],
+    "modules": [
+      {
+        "id": "m-m1",
+        "name": "Analysis I",
+        "cp": 9,
+        "categoryId": "cat-core-math",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "m-m2",
+        "name": "Linear Algebra I",
+        "cp": 9,
+        "categoryId": "cat-core-math",
+        "semesterId": "sem-1",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "m-m3",
+        "name": "Analysis II",
+        "cp": 9,
+        "categoryId": "cat-core-math",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "m-m4",
+        "name": "Linear Algebra II",
+        "cp": 9,
+        "categoryId": "cat-core-math",
+        "semesterId": "sem-2",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "m-a1",
+        "name": "Numeric Math I",
+        "cp": 6,
+        "categoryId": "cat-applied-math",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": false
+      },
+      {
+        "id": "m-mn1",
+        "name": "Minor 1",
+        "cp": 6,
+        "categoryId": "cat-minor",
+        "subCategoryId": "cat-minor-core",
+        "semesterId": "sem-3",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "m-mn2",
+        "name": "Minor 2",
+        "cp": 6,
+        "categoryId": "cat-minor",
+        "subCategoryId": "cat-minor-core",
+        "semesterId": "sem-4",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "m-mn3",
+        "name": "Minor 3",
+        "cp": 6,
+        "categoryId": "cat-minor",
+        "subCategoryId": "cat-minor-specialization",
+        "semesterId": "sem-5",
+        "isPassed": false,
+        "isElective": true
+      },
+      {
+        "id": "m-mn4",
+        "name": "Minor 4",
+        "cp": 6,
+        "categoryId": "cat-minor",
+        "subCategoryId": "cat-minor-specialization",
+        "semesterId": "sem-6",
+        "isPassed": false,
+        "isElective": true
+      }
+    ]
+  }
+]
