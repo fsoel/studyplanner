@@ -7,17 +7,28 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
     "@vueuse/core": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
+    "drizzle-orm": "^0.45.2",
     "nuxt": "^4.4.2",
+    "openid-client": "^6.8.4",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",
     "vue-router": "^5.0.4",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "citty": "^0.2.2",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.22.4"
   }
 }

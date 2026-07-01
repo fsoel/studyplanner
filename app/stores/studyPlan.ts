@@ -7,44 +7,68 @@ import type {
   CourseTemplate,
   UserPlan,
 } from "../types";
+import { usePlanRepository } from "../repositories";
 
 export const useStudyPlanStore = defineStore("studyPlan", () => {
   const templates = ref<CourseTemplate[]>([]);
-  // Client-only persisted state: prevent Nuxt SSR payload from overwriting localStorage values.
+  // Client-only persisted state: prevent Nuxt SSR payload from overwriting hydrated values.
   const userPlans = skipHydrate(ref<UserPlan[]>([]));
   const activePlanId = skipHydrate(ref<string | null>(null));
   const isHydrated = ref(false);
 
-  // Persistence logic moved to client-only lifecycle
+  const repo = usePlanRepository();
+
+  // Load persisted state from the active repository (localStorage or backend).
+  // Driven explicitly from the app (after auth is known) rather than on store init.
+  const hydrate = async () => {
+    if (isHydrated.value) return;
+    const [plans, activeId] = await Promise.all([
+      repo.getPlans(),
+      repo.getActivePlanId(),
+    ]);
+    userPlans.value = plans;
+    activePlanId.value = activeId;
+    isHydrated.value = true;
+  };
+
+  const activePlan = computed(() =>
+    userPlans.value.find((p) => p.id === activePlanId.value),
+  );
+
+  // Debounced persistence of the active plan; flushed on plan switch so a quick
+  // edit-then-switch never drops the pending save.
   if (import.meta.client) {
-    const hydrateFromStorage = () => {
-      const storedPlans = localStorage.getItem("studyplanner-user-plans");
-      const storedActiveId = localStorage.getItem("studyplanner-active-plan");
+    let saveTimer: ReturnType<typeof setTimeout> | undefined;
+    let pending: UserPlan | null = null;
 
-      if (storedPlans) {
-        try {
-          const parsed = JSON.parse(storedPlans);
-          if (Array.isArray(parsed)) {
-            userPlans.value = parsed;
-          }
-        } catch (e) {
-          console.error("Failed to parse stored plans:", e);
-        }
+    const flushSave = () => {
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = undefined;
+      if (pending) {
+        const plan = pending;
+        pending = null;
+        repo.updatePlan(plan).catch((e) =>
+          console.error("Failed to save plan:", e),
+        );
       }
-
-      if (storedActiveId) activePlanId.value = storedActiveId;
-
-      isHydrated.value = true;
     };
 
-    // Delay hydration until after client-side state hydration to avoid SSR payload overwrite.
-    queueMicrotask(hydrateFromStorage);
+    const scheduleSave = (plan: UserPlan) => {
+      pending = JSON.parse(JSON.stringify(plan));
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(flushSave, 500);
+    };
 
     watch(
-      userPlans,
-      (newVal) => {
+      activePlan,
+      (plan, oldPlan) => {
         if (!isHydrated.value) return;
-        localStorage.setItem("studyplanner-user-plans", JSON.stringify(newVal));
+        // On switch, persist the previously-edited plan immediately.
+        if (oldPlan && plan && oldPlan.id !== plan.id) {
+          flushSave();
+          return;
+        }
+        if (plan) scheduleSave(plan);
       },
       { deep: true, flush: "post" },
     );
@@ -53,19 +77,14 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
       activePlanId,
       (newVal) => {
         if (!isHydrated.value) return;
-        if (newVal) {
-          localStorage.setItem("studyplanner-active-plan", newVal);
-        } else {
-          localStorage.removeItem("studyplanner-active-plan");
-        }
+        repo.setActivePlanId(newVal).catch((e) =>
+          console.error("Failed to save active plan:", e),
+        );
       },
       { flush: "post" },
     );
   }
 
-  const activePlan = computed(() =>
-    userPlans.value.find((p) => p.id === activePlanId.value),
-  );
   const activeTemplate = computed(() =>
     templates.value.find((t) => t.id === activePlan.value?.courseTemplateId),
   );
@@ -186,7 +205,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     }
   };
 
-  const createPlan = (
+  const createPlan = async (
     name: string,
     templateId: string,
     startSeason: "WS" | "SS",
@@ -195,15 +214,14 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     const templ = templates.value.find((t) => t.id === templateId);
     if (!templ) return;
 
-    const newPlan: UserPlan = {
-      id: crypto.randomUUID(),
+    const plan = await repo.createPlan({
       name,
       courseTemplateId: templateId,
       config: { startSeason, startYear, numSemesters: 6 },
       modules: templ.modules.map((m) => ({ ...m })), // deep copy modules
-    };
-    userPlans.value.push(newPlan);
-    activePlanId.value = newPlan.id;
+    });
+    userPlans.value.push(plan);
+    activePlanId.value = plan.id;
   };
 
   const switchPlan = (id: string) => {
@@ -234,7 +252,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     return { season, year: academicYear };
   });
 
-  const isFutureSemester = (semesterId: string) => {
+  const isFutureSemester = (semesterId: string | null) => {
     const sem = semesters.value.find((s) => s.id === semesterId);
     if (!sem) return false;
 
@@ -259,7 +277,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     return false;
   };
 
-  const isPastSemester = (semesterId: string) => {
+  const isPastSemester = (semesterId: string | null) => {
     const sem = semesters.value.find((s) => s.id === semesterId);
     if (!sem) return false;
 
@@ -274,12 +292,15 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     return false;
   };
 
-  const deletePlan = (id: string) => {
+  const deletePlan = async (id: string) => {
     userPlans.value = userPlans.value.filter((p) => p.id !== id);
     if (activePlanId.value === id) {
       const nextPlan = userPlans.value?.[0];
       activePlanId.value = nextPlan ? nextPlan.id : null;
     }
+    await repo.deletePlan(id).catch((e) =>
+      console.error("Failed to delete plan:", e),
+    );
   };
 
   const normalizeSubCategoryId = (
@@ -433,6 +454,8 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     totalPassedCp,
     totalRequiredCp,
     progressPercent,
+    isHydrated,
+    hydrate,
     isFutureSemester,
     isPastSemester,
     loadTemplates,

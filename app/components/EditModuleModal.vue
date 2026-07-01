@@ -176,8 +176,7 @@ const syncForm = () => {
 
   form.value.name = "New Elective";
   form.value.cp = 6;
-  form.value.semesterId =
-    store.semesters.length > 0 ? store.semesters[0].id : "";
+  form.value.semesterId = store.semesters[0]?.id ?? "";
 };
 
 watch(() => [props.show, props.moduleId], syncForm, { immediate: true });

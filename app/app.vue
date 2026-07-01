@@ -27,17 +27,45 @@
           Study Planner
         </h1>
       </div>
-      <button
-        @click="toggleDark()"
-        class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center gap-2 font-medium text-sm"
-      >
-        <span v-if="isDark">☀️ Light Mode</span>
-        <span v-else>🌙 Dark Mode</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <button
+          @click="toggleDark()"
+          class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center gap-2 font-medium text-sm"
+        >
+          <span v-if="isDark">☀️ Light Mode</span>
+          <span v-else>🌙 Dark Mode</span>
+        </button>
+        <button
+          v-if="isBackend && isAuthenticated"
+          @click="logout()"
+          class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center gap-2 font-medium text-sm"
+        >
+          Sign out
+        </button>
+      </div>
     </header>
 
     <main class="flex-1 p-6 overflow-hidden flex flex-col">
-      <StudyPlanner />
+      <StudyPlanner v-if="isAuthenticated" />
+      <div
+        v-else-if="ready"
+        class="flex-1 flex items-center justify-center"
+      >
+        <div
+          class="flex flex-col items-center gap-5 px-8 py-10 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl max-w-sm text-center"
+        >
+          <h2 class="text-xl font-bold">Welcome to Study Planner</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Sign in to save your study plans and access them from any device.
+          </p>
+          <button
+            @click="login()"
+            class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition shadow"
+          >
+            Sign in
+          </button>
+        </div>
+      </div>
     </main>
 
     <transition name="fade">
@@ -66,17 +94,23 @@
 import { useDark, useToggle } from "@vueuse/core";
 import { nextTick, onMounted, ref } from "vue";
 import { useStudyPlanStore } from "./stores/studyPlan";
+import { useAuth } from "./composables/useAuth";
 import StudyPlanner from "./components/StudyPlanner.vue";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 const store = useStudyPlanStore();
+const { ready, isBackend, isAuthenticated, fetchMe, login, logout } = useAuth();
 const isPageLoading = ref(true);
 
 onMounted(async () => {
   try {
-    if (store.templates.length === 0) {
-      await store.loadTemplates();
+    const authed = await fetchMe();
+    if (authed) {
+      if (store.templates.length === 0) {
+        await store.loadTemplates();
+      }
+      await store.hydrate();
     }
     await nextTick();
     await new Promise<void>((resolve) =>
