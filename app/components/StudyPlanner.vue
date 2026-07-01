@@ -60,14 +60,32 @@
             </div>
           </div>
 
-          <div class="flex flex-col min-w-[180px]">
+          <button
+            type="button"
+            @click="showProgressOverview = true"
+            class="group flex flex-col min-w-[180px] text-left"
+            title="View progress overview"
+          >
             <label
-              class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 ml-1"
+              class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 ml-1 cursor-pointer flex items-center gap-1"
               >Progress ({{ store.totalPassedCp }} /
-              {{ store.totalRequiredCp }} CP)</label
-            >
+              {{ store.totalRequiredCp }} CP)
+              <svg
+                class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                ></path>
+              </svg>
+            </label>
             <div
-              class="h-9 flex items-center gap-3 bg-gray-50 dark:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm"
+              class="h-9 flex items-center gap-3 bg-gray-50 dark:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm transition-colors group-hover:border-blue-400 dark:group-hover:border-blue-500"
             >
               <div
                 class="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
@@ -82,7 +100,7 @@
                 >{{ store.progressPercent }}%</span
               >
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -472,6 +490,12 @@
       @close="showEditModal = false"
     />
 
+    <ProgressOverviewModal
+      v-if="showProgressOverview"
+      :show="showProgressOverview"
+      @close="showProgressOverview = false"
+    />
+
     <ConfirmModal
       :show="!!semesterPendingRemove"
       title="Remove Semester"
@@ -491,12 +515,14 @@ import type { Category, ElectiveSubCategory, Module } from "../types";
 import ModuleCard from "./ModuleCard.vue";
 import ManagePlansModal from "./ManagePlansModal.vue";
 import EditModuleModal from "./EditModuleModal.vue";
+import ProgressOverviewModal from "./ProgressOverviewModal.vue";
 import ConfirmModal from "./ConfirmModal.vue";
 
 const store = useStudyPlanStore();
 const showPlanManager = ref(false);
 const showEditModal = ref(false);
 const isDragging = ref(false);
+const showProgressOverview = ref(false);
 const semesterPendingRemove = ref<string | null>(null);
 
 // Helper to extract colors for category headers to match light/dark mode
