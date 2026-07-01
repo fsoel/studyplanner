@@ -1,5 +1,5 @@
 # Build the self-contained Nuxt/Nitro server (UI + API in one output).
-FROM node:20-slim AS builder
+FROM node:24-slim AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -9,7 +9,7 @@ COPY . .
 RUN npm run build
 
 # Runtime image: only the built server + migrations are needed.
-FROM node:20-slim AS runner
+FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NUXT_PUBLIC_STORAGE_MODE=backend

@@ -61,5 +61,5 @@ cp .env.example .env      # set PUBLIC_URL + OIDC values
 npm run dev               # http://localhost:3000
 ```
 
-- `NUXT_PUBLIC_STORAGE_MODE=local npm run dev` — work on the UI with no backend or login.
-- `docker compose -f docker-compose.dev.yml up --build` — run the full stack from local source.
+- `NUXT_PUBLIC_STORAGE_MODE=local npm run dev` - work on the UI with no backend or login.
+- `docker compose -f docker-compose.dev.yml up --build` - run the full stack from local source.
