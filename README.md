@@ -1,88 +1,65 @@
 # Study Planner
 
-A study planner for tracking modules, credit points (CP), and semesters against a
-course template. Built with **Nuxt 4** (Vue 3 + Pinia) with a **Nitro backend** that
-persists plans in **SQLite** and authenticates users via **OpenID Connect**.
+A self-hostable web app to plan your studies - track modules, credit points, and semesters
+against a course template. Log in with your own OpenID Connect provider; your plans are saved
+to a database and sync across devices.
 
-The whole app — UI and API — is a single Nuxt server, so it ships as **one Docker image**.
+Everything runs as **one Docker container**.
 
-## Storage modes
+## Self-hosting
 
-The frontend persistence layer is pluggable via `NUXT_PUBLIC_STORAGE_MODE`:
+You need [Docker](https://docs.docker.com/get-docker/) and an OpenID Connect provider
+(e.g. Authentik, Keycloak, Auth0, Google - see [Login setup](#login-setup)).
 
-- **`backend`** (default): plans are stored in the database via the API; users log in with OIDC.
-- **`local`**: plans are stored only in the browser's `localStorage` (the original offline
-  behavior). No backend or login required — handy for development.
+1. Download [docker-compose.yml](docker-compose.yml) to your server.
+2. Open it and set these values under `environment:`
+   - `PUBLIC_URL` - the address you'll open the app at, e.g. `https://study.example.com`
+   - `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` - from your login provider
+3. Start it:
 
-## Quick start (local development)
+   ```bash
+   docker compose up -d
+   ```
 
-```bash
-npm install
-cp .env.example .env      # fill in OIDC credentials for backend mode
-npm run dev               # http://localhost:3000
-```
+The app is now at `http://localhost:3000` (put it behind a reverse proxy for HTTPS and your
+real domain). Your data is stored in a Docker volume, so it survives restarts and updates.
 
-For pure offline UI work without configuring OIDC:
-
-```bash
-NUXT_PUBLIC_STORAGE_MODE=local npm run dev
-```
-
-Database migrations are applied automatically on server startup. To generate a new migration
-after changing `server/utils/schema.ts`:
+To update to the latest version:
 
 ```bash
-npm run db:generate
+docker compose pull && docker compose up -d
 ```
+
+## Login setup
+
+The app uses OpenID Connect, so you sign in with your own identity provider. In your provider,
+create a **confidential web application** and:
+
+1. Set the redirect URI to **`<PUBLIC_URL>/auth/callback`**
+   (e.g. `https://study.example.com/auth/callback`). It must match `PUBLIC_URL` exactly.
+2. Note the **issuer URL** (it serves `<issuer>/.well-known/openid-configuration`) and the
+   **client ID / secret**.
+3. Put those into `docker-compose.yml` as shown above.
 
 ## Configuration
 
-See [.env.example](.env.example). Key variables:
-
-| Variable | Purpose |
+| Setting | Purpose |
 | --- | --- |
-| `NUXT_PUBLIC_STORAGE_MODE` | `backend` (default) or `local` |
-| `DATABASE_URL` | libSQL/SQLite location, e.g. `file:./data/studyplanner.db` |
-| `PUBLIC_URL` | Public base URL; OIDC redirect is `${PUBLIC_URL}/auth/callback` |
-| `OIDC_ISSUER` | Your OIDC provider's issuer URL (discovery-based) |
-| `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` | OAuth client credentials |
+| `PUBLIC_URL` | Public address of the app; the login redirect is `<PUBLIC_URL>/auth/callback` |
+| `OIDC_ISSUER` | Your provider's issuer URL |
+| `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` | Credentials from your provider |
+| `DATABASE_URL` | Database location (default is the mounted volume — leave as-is) |
+| `NUXT_PUBLIC_STORAGE_MODE` | `backend` (default). Set `local` to store plans in the browser only, with no login |
 
-### Setting up your OIDC provider
+## Development
 
-The app works with any standards-compliant OpenID Connect provider (Keycloak, Authentik,
-Auth0, Zitadel, Okta, Ory, Google, etc.). In your provider, register an OAuth **Web
-application** / confidential client and configure:
-
-1. **Issuer URL** → set `OIDC_ISSUER` to it. It must serve a discovery document at
-   `${OIDC_ISSUER}/.well-known/openid-configuration`.
-2. **Redirect URI** → `${PUBLIC_URL}/auth/callback`
-   (e.g. `http://localhost:3000/auth/callback` for local dev).
-3. **Scopes** → the app requests `openid email profile`.
-4. Copy the client ID/secret into `.env` (`OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET`).
-
-## Deployment (Docker)
-
-The app builds to a single image and runs as one process. The SQLite database is kept on a
-named volume so it survives restarts.
+Built with Nuxt 4 (Vue 3 + Pinia); the UI and API are a single Nuxt/Nitro server using SQLite.
 
 ```bash
-cp .env.example .env      # set PUBLIC_URL + OIDC credentials for your domain
-docker compose up --build
+npm install
+cp .env.example .env      # set PUBLIC_URL + OIDC values
+npm run dev               # http://localhost:3000
 ```
 
-The app is served on `http://localhost:3000` (map/proxy as needed). Set `PUBLIC_URL` to the
-externally reachable URL and register that `${PUBLIC_URL}/auth/callback` with your OIDC provider.
-
-## Architecture
-
-```
-app/                 Vue SPA (components, stores, composables)
-  repositories/      pluggable persistence (localStorage vs API)
-server/              Nitro backend
-  routes/auth/       OIDC login / callback / logout
-  api/               session-guarded REST (plans, me)
-  utils/             drizzle schema + client, sessions, OIDC config
-  middleware/        attach the authenticated user to requests
-  plugins/           apply DB migrations on startup
-drizzle/             generated SQL migrations
-```
+- `NUXT_PUBLIC_STORAGE_MODE=local npm run dev` — work on the UI with no backend or login.
+- `docker compose -f docker-compose.dev.yml up --build` — run the full stack from local source.

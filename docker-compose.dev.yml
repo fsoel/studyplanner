@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: file:/data/studyplanner.db
+      NUXT_PUBLIC_STORAGE_MODE: backend
+    volumes:
+      - studyplanner-data:/data
+    restart: unless-stopped
+
+volumes:
+  studyplanner-data:

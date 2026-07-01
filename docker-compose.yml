@@ -1,14 +1,18 @@
 services:
   app:
-    build: .
+    image: ghcr.io/fsoel/studyplanner:latest
     ports:
       - "3000:3000"
-    env_file:
-      - .env
     environment:
-      # SQLite file lives on the persistent volume below.
       DATABASE_URL: file:/data/studyplanner.db
       NUXT_PUBLIC_STORAGE_MODE: backend
+
+      # OpenID Connect configuration
+      PUBLIC_URL: http://localhost:3000
+      OIDC_ISSUER: https://auth.example.com
+      OIDC_CLIENT_ID: your-oauth-client-id
+      OIDC_CLIENT_SECRET: your-oauth-client-secret
+
     volumes:
       - studyplanner-data:/data
     restart: unless-stopped
