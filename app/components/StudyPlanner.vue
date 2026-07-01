@@ -497,7 +497,6 @@ const store = useStudyPlanStore();
 const showPlanManager = ref(false);
 const showEditModal = ref(false);
 const isDragging = ref(false);
-const hasShownInitialPlanPrompt = ref(false);
 const semesterPendingRemove = ref<string | null>(null);
 
 // Helper to extract colors for category headers to match light/dark mode
@@ -720,22 +719,34 @@ watch(
 );
 
 onMounted(() => {
-  maybeShowInitialPlanPrompt();
+  ensureActivePlanOrPrompt();
 });
 
-const maybeShowInitialPlanPrompt = () => {
-  if (hasShownInitialPlanPrompt.value) return;
+// Only force the "manage plans" modal when the user has no plans at all. If plans
+// exist, restore the last-selected one (or fall back to the first) and go straight in.
+const ensureActivePlanOrPrompt = () => {
+  if (!store.isHydrated || store.templates.length === 0) return;
 
-  if (!store.activePlanId && store.templates.length > 0) {
+  if (store.userPlans.length === 0) {
     showPlanManager.value = true;
-    hasShownInitialPlanPrompt.value = true;
+    return;
+  }
+
+  if (!store.activePlan) {
+    const first = store.userPlans[0];
+    if (first) store.switchPlan(first.id);
   }
 };
 
 watch(
-  () => [store.templates.length, store.activePlanId],
+  () => [
+    store.isHydrated,
+    store.templates.length,
+    store.userPlans.length,
+    store.activePlanId,
+  ],
   () => {
-    maybeShowInitialPlanPrompt();
+    ensureActivePlanOrPrompt();
   },
 );
 

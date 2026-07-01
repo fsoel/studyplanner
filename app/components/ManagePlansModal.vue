@@ -189,7 +189,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useStudyPlanStore } from "../stores/studyPlan";
 import ConfirmModal from "./ConfirmModal.vue";
 
@@ -210,6 +210,20 @@ const form = ref({
 
 const isValid = computed(
   () => form.value.name.trim().length > 0 && form.value.templateId !== "",
+);
+
+// Default the plan name to the selected course's name, unless the user has typed
+// a custom name (i.e. the current name doesn't match any course name).
+watch(
+  () => form.value.templateId,
+  (templateId) => {
+    const template = store.templates.find((t) => t.id === templateId);
+    if (!template) return;
+    const current = form.value.name.trim();
+    const isAutoFilled =
+      current === "" || store.templates.some((t) => t.name === current);
+    if (isAutoFilled) form.value.name = template.name;
+  },
 );
 const planPendingDelete = ref<string | null>(null);
 const planToDelete = computed(() =>
