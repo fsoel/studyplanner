@@ -3,7 +3,7 @@
     class="relative h-screen w-full bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col font-sans overflow-hidden"
   >
     <header
-      class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex justify-between items-center z-20 shrink-0"
+      class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-800 px-4 py-3 lg:px-6 lg:py-4 flex justify-between items-center z-20 shrink-0"
     >
       <div class="flex items-center gap-3">
         <div class="p-2 bg-blue-600 rounded-lg shadow-inner">
@@ -22,7 +22,7 @@
           </svg>
         </div>
         <h1
-          class="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400"
+          class="text-xl sm:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400"
         >
           Study Planner
         </h1>
@@ -30,23 +30,68 @@
       <div class="flex items-center gap-2">
         <button
           @click="toggleDark()"
-          class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center gap-2 font-medium text-sm"
+          :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center justify-center text-gray-700 dark:text-gray-200"
         >
-          <span v-if="isDark">☀️ Light Mode</span>
-          <span v-else>🌙 Dark Mode</span>
+          <svg
+            v-if="isDark"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364l-1.414-1.414M6.05 6.05L4.636 4.636m12.728 0l-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            ></path>
+          </svg>
+          <svg
+            v-else
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            ></path>
+          </svg>
         </button>
         <button
           v-if="isBackend && isAuthenticated"
           @click="logout()"
-          class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center gap-2 font-medium text-sm"
+          title="Sign out"
+          aria-label="Sign out"
+          class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center justify-center text-gray-700 dark:text-gray-200"
         >
-          Sign out
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            ></path>
+          </svg>
         </button>
       </div>
     </header>
 
-    <main class="flex-1 p-6 overflow-hidden flex flex-col">
-      <StudyPlanner v-if="isAuthenticated" />
+    <main class="flex-1 p-3 lg:p-6 overflow-hidden flex flex-col">
+      <template v-if="isAuthenticated">
+        <PlannerMobile v-if="isMobile" />
+        <StudyPlanner v-else />
+      </template>
       <div
         v-else-if="ready"
         class="relative flex-1 flex items-center justify-center overflow-hidden -m-6"
@@ -92,15 +137,18 @@
 </template>
 
 <script setup lang="ts">
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark, useToggle, useMediaQuery } from "@vueuse/core";
 import { nextTick, onMounted, ref } from "vue";
 import { useStudyPlanStore } from "./stores/studyPlan";
 import { useAuth } from "./composables/useAuth";
 import StudyPlanner from "./components/StudyPlanner.vue";
+import PlannerMobile from "./components/PlannerMobile.vue";
 import AnimatedBackground from "./components/AnimatedBackground.vue";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
+// Phones (portrait) get the dedicated mobile view; tablets keep the (denser) grid.
+const isMobile = useMediaQuery("(max-width: 767px)");
 const store = useStudyPlanStore();
 const { ready, isBackend, isAuthenticated, fetchMe, login, logout } = useAuth();
 const isPageLoading = ref(true);

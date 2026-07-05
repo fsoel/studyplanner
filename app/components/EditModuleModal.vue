@@ -4,7 +4,7 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 py-10 overflow-y-auto"
   >
     <div
-      class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md my-auto transform transition-all border border-gray-200 dark:border-gray-700"
+      class="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-xl shadow-2xl w-full max-w-md my-auto transform transition-all border border-gray-200 dark:border-gray-700"
     >
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
@@ -141,6 +141,7 @@ const props = defineProps<{
   moduleId?: string;
   categoryId: string; // The category we are adding to
   subCategoryId?: string | null;
+  defaultSemesterId?: string; // Preselected semester when adding (e.g. mobile view)
 }>();
 
 const emit = defineEmits(["close"]);
@@ -176,7 +177,8 @@ const syncForm = () => {
 
   form.value.name = "New Elective";
   form.value.cp = 6;
-  form.value.semesterId = store.semesters[0]?.id ?? "";
+  form.value.semesterId =
+    props.defaultSemesterId ?? store.semesters[0]?.id ?? "";
 };
 
 watch(() => [props.show, props.moduleId], syncForm, { immediate: true });

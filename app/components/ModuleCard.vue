@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-3 border rounded-lg shadow-sm text-sm mb-3 transition-all hover:shadow-md relative group/card"
+    class="p-2 xl:p-3 border rounded-lg shadow-sm text-sm mb-2 transition-all hover:shadow-md relative group/card"
     :class="cardClasses"
     @click="store.togglePassed(module.id)"
     :title="
@@ -13,7 +13,7 @@
   >
     <div class="flex justify-between items-start">
       <span
-        class="font-semibold leading-tight pr-4 cursor-grab active:cursor-grabbing grow"
+        class="font-semibold leading-tight pr-4 cursor-grab active:cursor-grabbing grow min-w-0 [overflow-wrap:anywhere]"
         :class="{ 'opacity-70': store.isPastSemester(module.semesterId) }"
         >{{ module.name }}</span
       >

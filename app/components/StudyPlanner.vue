@@ -1,7 +1,7 @@
 <template>
   <div class="font-sans flex flex-col pt-4 flex-1 min-h-0">
     <div
-      class="flex flex-wrap gap-6 mb-6 items-center bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full"
+      class="flex flex-wrap gap-3 lg:gap-6 mb-4 lg:mb-6 items-center bg-white dark:bg-gray-800 p-3 lg:p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full"
     >
       <div v-if="store.activePlan" class="flex items-center gap-4">
         <div class="flex flex-col">
@@ -134,14 +134,14 @@
         <thead>
           <tr>
             <th
-              class="w-48 p-4 border-b-2 border-r-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 z-30 sticky left-0 text-center font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-sm shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
+              class="w-40 xl:w-48 p-3 xl:p-4 border-b-2 border-r-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 z-30 sticky left-0 text-center font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-sm shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
             >
               Categories
             </th>
             <th
-              v-for="(sem, index) in store.semesters"
+              v-for="sem in store.semesters"
               :key="sem.id"
-              class="min-w-[280px] w-[280px] p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center relative group"
+              class="min-w-[200px] w-[200px] xl:w-[240px] 2xl:w-[280px] p-3 xl:p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center relative group"
               :class="[
                 store.currentSemesterInfo.season === sem.season &&
                 store.currentSemesterInfo.year === sem.year
@@ -150,7 +150,7 @@
               ]"
             >
               <div
-                class="font-bold text-gray-800 dark:text-gray-100 text-lg mb-1"
+                class="font-bold text-gray-800 dark:text-gray-100 text-base xl:text-lg mb-1"
               >
                 {{ sem.label }}
               </div>
@@ -196,7 +196,7 @@
             </th>
             <!-- Add Semester Column Header -->
             <th
-              class="min-w-[280px] w-[280px] p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center bg-gray-50/20 dark:bg-gray-800/20 border-dashed border-l-2"
+              class="min-w-[200px] w-[200px] xl:w-[240px] 2xl:w-[280px] p-3 xl:p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center bg-gray-50/20 dark:bg-gray-800/20 border-dashed border-l-2"
             >
               <button
                 @click="store.addSemester"
@@ -227,7 +227,7 @@
             class="border-b border-gray-100 dark:border-gray-700/50 group/row"
           >
             <td
-              class="p-5 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 sticky left-0 align-top z-20 shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
+              class="p-3 xl:p-5 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 sticky left-0 align-top z-20 shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
             >
               <div
                 class="font-bold text-sm tracking-tight mb-2 border-l-4 pl-3 min-w-0"
@@ -326,7 +326,7 @@
             <td
               v-for="sem in store.semesters"
               :key="sem.id"
-              class="p-3 border-r border-gray-50 dark:border-gray-700/30 hover:bg-blue-50/30 dark:hover:bg-gray-700/50 transition-colors"
+              class="p-2 xl:p-3 border-r border-gray-50 dark:border-gray-700/30 hover:bg-blue-50/30 dark:hover:bg-gray-700/50 transition-colors"
               :class="[
                 row.isSummary ? 'align-middle' : 'align-top',
                 store.currentSemesterInfo.season === sem.season &&
@@ -364,7 +364,7 @@
                       row.subCategory?.id ?? null,
                     )
                   "
-                  class="min-h-[120px] h-full"
+                  class="min-h-[84px] xl:min-h-[120px] h-full"
                 >
                   <template #item="{ element }">
                     <ModuleCard
@@ -384,7 +384,7 @@
             </td>
             <!-- Add Semester Column Dropzone -->
             <td
-              class="p-3 align-top bg-gray-50/10 dark:bg-gray-900/10 border-l-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors"
+              class="p-2 xl:p-3 align-top bg-gray-50/10 dark:bg-gray-900/10 border-l-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors"
             >
               <div v-if="row.isSummary" class="min-h-[52px]"></div>
               <ClientOnly v-else>
@@ -405,7 +405,7 @@
                       row.subCategory?.id ?? null,
                     )
                   "
-                  class="min-h-[120px] h-full flex flex-col items-center justify-center border-2 border-transparent hover:border-blue-300 dark:hover:border-blue-700 rounded-lg transition-all"
+                  class="min-h-[84px] xl:min-h-[120px] h-full flex flex-col items-center justify-center border-2 border-transparent hover:border-blue-300 dark:hover:border-blue-700 rounded-lg transition-all"
                 >
                   <template #item="{ element }">
                     <ModuleCard
@@ -511,7 +511,12 @@
 import { computed, onMounted, ref, watch } from "vue";
 import draggable from "vuedraggable";
 import { useStudyPlanStore } from "../stores/studyPlan";
-import type { Category, ElectiveSubCategory, Module } from "../types";
+import {
+  usePlannerRows,
+  moduleBelongsToRow,
+  getCategoryHeaderClasses,
+  type PlannerRow,
+} from "../composables/usePlannerRows";
 import ModuleCard from "./ModuleCard.vue";
 import ManagePlansModal from "./ManagePlansModal.vue";
 import EditModuleModal from "./EditModuleModal.vue";
@@ -519,31 +524,12 @@ import ProgressOverviewModal from "./ProgressOverviewModal.vue";
 import ConfirmModal from "./ConfirmModal.vue";
 
 const store = useStudyPlanStore();
+const { plannerRows } = usePlannerRows();
 const showPlanManager = ref(false);
 const showEditModal = ref(false);
 const isDragging = ref(false);
 const showProgressOverview = ref(false);
 const semesterPendingRemove = ref<string | null>(null);
-
-// Helper to extract colors for category headers to match light/dark mode
-const getCategoryHeaderClasses = (colorStr: string) => {
-  const parts = colorStr.split(" ");
-  const lightBg = parts.find((p) => p.startsWith("bg-") && !p.includes(":"));
-  const lightText = parts.find(
-    (p) => p.startsWith("text-") && !p.includes(":"),
-  );
-  const darkText = parts.find((p) => p.startsWith("dark:text-"));
-  const darkBg = parts.find((p) => p.startsWith("dark:bg-"))?.split("/")[0]; // Remove alpha transparency for border
-
-  return [
-    lightText, // Light mode text (strong)
-    lightBg?.replace("bg-", "border-"), // Light mode border (light base)
-    darkText, // Dark mode text (strong)
-    darkBg?.replace("dark:bg-", "dark:border-"), // Dark mode border (dark base)
-  ]
-    .filter(Boolean)
-    .join(" ");
-};
 
 // Edit Modal state
 const modalModeCategoryId = ref("");
@@ -587,113 +573,6 @@ const confirmRemoveSemester = () => {
   if (!semesterPendingRemove.value) return;
   store.removeSemester(semesterPendingRemove.value);
   semesterPendingRemove.value = null;
-};
-
-interface PlannerRow {
-  key: string;
-  displayName: string;
-  category: Category;
-  subCategory?: ElectiveSubCategory;
-  kind: "category" | "summary" | "direct" | "subCategory";
-  isSummary: boolean;
-  dragGroupId: string;
-  canAddElective: boolean;
-  minCp?: number;
-  maxCp?: number;
-}
-
-const hasElectiveBounds = (scope: {
-  minElectiveCp?: number;
-  maxElectiveCp?: number;
-}) => {
-  return scope.minElectiveCp !== undefined || scope.maxElectiveCp !== undefined;
-};
-
-const getSubCategoryIds = (category: Category) => {
-  return new Set(
-    (category.subCategories || []).map((subCategory) => subCategory.id),
-  );
-};
-
-const moduleHasValidSubCategory = (mod: Module, category: Category) => {
-  return (
-    !!mod.subCategoryId && getSubCategoryIds(category).has(mod.subCategoryId)
-  );
-};
-
-const moduleIsDirectOrUnassigned = (mod: Module, category: Category) => {
-  return (
-    mod.categoryId === category.id && !moduleHasValidSubCategory(mod, category)
-  );
-};
-
-const plannerRows = computed<PlannerRow[]>(() => {
-  const rows: PlannerRow[] = [];
-
-  for (const category of store.categories) {
-    const subCategories = category.subCategories || [];
-    const hasSubCategories = subCategories.length > 0;
-
-    rows.push({
-      key: category.id,
-      displayName: category.name,
-      category,
-      kind: hasSubCategories ? "summary" : "category",
-      isSummary: hasSubCategories,
-      dragGroupId: category.id,
-      canAddElective: hasElectiveBounds(category) && !hasSubCategories,
-      minCp: category.minElectiveCp,
-      maxCp: category.maxElectiveCp,
-    });
-
-    if (hasSubCategories) {
-      const hasDirectOrUnassignedModules = (
-        store.activePlan?.modules || []
-      ).some((mod) => moduleIsDirectOrUnassigned(mod, category));
-      if (hasDirectOrUnassignedModules) {
-        rows.push({
-          key: `${category.id}::direct`,
-          displayName: "Unassigned",
-          category,
-          kind: "direct",
-          isSummary: false,
-          dragGroupId: category.id,
-          canAddElective: false,
-          minCp: undefined,
-          maxCp: undefined,
-        });
-      }
-
-      for (const subCategory of subCategories) {
-        rows.push({
-          key: `${category.id}::${subCategory.id}`,
-          displayName: subCategory.name,
-          category,
-          subCategory,
-          kind: "subCategory",
-          isSummary: false,
-          dragGroupId: `${category.id}::${subCategory.id}`,
-          canAddElective: true,
-          minCp: subCategory.minElectiveCp,
-          maxCp: subCategory.maxElectiveCp,
-        });
-      }
-    }
-  }
-
-  return rows;
-});
-
-const moduleBelongsToRow = (mod: Module, row: PlannerRow) => {
-  if (mod.categoryId !== row.category.id) return false;
-  if (row.kind === "summary") return false;
-  if (row.kind === "subCategory") {
-    return mod.subCategoryId === row.subCategory?.id;
-  }
-  if (row.kind === "direct") {
-    return moduleIsDirectOrUnassigned(mod, row.category);
-  }
-  return true;
 };
 
 // Local Matrix state to fix drag infinite loop behavior with computed properties in vue 3
@@ -779,12 +658,6 @@ watch(
 const getSemesterCpSum = (semId: string) => {
   return store.effectiveModules
     .filter((m) => m.semesterId === semId)
-    .reduce((sum, m) => sum + m.cp, 0);
-};
-
-const getCategoryCpSum = (catId: string) => {
-  return store.effectiveModules
-    .filter((m) => m.categoryId === catId)
     .reduce((sum, m) => sum + m.cp, 0);
 };
 

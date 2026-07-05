@@ -1,10 +1,10 @@
 <template>
   <div
     v-if="show"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 py-10 overflow-y-auto"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4 py-10 overflow-y-auto"
   >
     <div
-      class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-2xl my-auto transform transition-all border border-gray-200 dark:border-gray-700"
+      class="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl my-auto transform transition-all border border-gray-200 dark:border-gray-700"
     >
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
