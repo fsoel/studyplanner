@@ -5,20 +5,27 @@ import { createSession, setSessionCookie } from "../../utils/session";
 import { useDb } from "../../utils/db";
 import { serverConfig } from "../../utils/config";
 import { oauthState, users } from "../../utils/schema";
+import {
+  clearOAuthStateCookie,
+  getOAuthStateCookie,
+} from "../../utils/oauth-state";
 
 // OIDC redirect target: validate state, exchange the code, upsert the user, start a session.
 export default defineEventHandler(async (event) => {
   const db = useDb();
   const state = String(getQuery(event).state || "");
+  const browserState = getOAuthStateCookie(event);
+  clearOAuthStateCookie(event);
+
+  if (!state || !browserState || state !== browserState) {
+    throw createError({ statusCode: 400, statusMessage: "Invalid OAuth state" });
+  }
 
   const stateRow = await db
-    .select()
-    .from(oauthState)
+    .delete(oauthState)
     .where(eq(oauthState.state, state))
+    .returning()
     .get();
-  if (state) {
-    await db.delete(oauthState).where(eq(oauthState.state, state));
-  }
   if (!stateRow) {
     throw createError({ statusCode: 400, statusMessage: "Invalid OAuth state" });
   }
