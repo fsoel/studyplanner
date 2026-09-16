@@ -25,6 +25,8 @@ export const sessions = sqliteTable("sessions", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  // Nullable for compatibility with sessions created before idle tracking.
+  lastUsedAt: integer("last_used_at", { mode: "timestamp" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
