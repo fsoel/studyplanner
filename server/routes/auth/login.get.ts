@@ -23,11 +23,11 @@ export default defineEventHandler(async (event) => {
   const db = useDb();
   await db.delete(oauthState).where(lt(oauthState.expiresAt, new Date()));
 
-  const { url, state, codeVerifier } = await buildLoginUrl();
+  const { url, state, codeVerifier, nonce } = await buildLoginUrl();
   const expiresAt = new Date(
     Date.now() + OAUTH_STATE_TTL_SECONDS * 1000,
   );
-  await db.insert(oauthState).values({ state, codeVerifier, expiresAt });
+  await db.insert(oauthState).values({ state, codeVerifier, nonce, expiresAt });
   setOAuthStateCookie(event, state);
   return sendRedirect(event, url, 302);
 });

@@ -32,6 +32,9 @@ export default defineEventHandler(async (event) => {
   if (stateRow.expiresAt.getTime() < Date.now()) {
     throw createError({ statusCode: 400, statusMessage: "OAuth state expired" });
   }
+  if (!stateRow.nonce) {
+    throw createError({ statusCode: 400, statusMessage: "Invalid OAuth state" });
+  }
 
   // Reconstruct the full callback URL against the trusted public base URL.
   const currentUrl = new URL(
@@ -42,6 +45,7 @@ export default defineEventHandler(async (event) => {
     currentUrl,
     stateRow.codeVerifier,
     state,
+    stateRow.nonce,
   );
 
   const existing = await db

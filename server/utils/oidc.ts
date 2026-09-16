@@ -26,16 +26,18 @@ export function getRedirectUri(): string {
   return `${serverConfig().publicUrl}/auth/callback`;
 }
 
-/** Build the provider authorize URL with PKCE + CSRF state. */
+/** Build the provider authorize URL with PKCE, CSRF state, and OIDC nonce. */
 export async function buildLoginUrl(): Promise<{
   url: string;
   state: string;
   codeVerifier: string;
+  nonce: string;
 }> {
   const config = await getOidcConfig();
   const codeVerifier = client.randomPKCECodeVerifier();
   const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier);
   const state = client.randomState();
+  const nonce = client.randomNonce();
 
   const url = client.buildAuthorizationUrl(config, {
     redirect_uri: getRedirectUri(),
@@ -43,9 +45,10 @@ export async function buildLoginUrl(): Promise<{
     code_challenge: codeChallenge,
     code_challenge_method: "S256",
     state,
+    nonce,
   });
 
-  return { url: url.href, state, codeVerifier };
+  return { url: url.href, state, codeVerifier, nonce };
 }
 
 export interface OidcIdentity {
@@ -55,16 +58,18 @@ export interface OidcIdentity {
   name: string | null;
 }
 
-/** Exchange the authorization code for tokens and extract the identity claims. */
+/** Exchange the authorization code and validate state, PKCE, and nonce. */
 export async function handleCallback(
   currentUrl: URL,
   codeVerifier: string,
   expectedState: string,
+  expectedNonce: string,
 ): Promise<OidcIdentity> {
   const config = await getOidcConfig();
   const tokens = await client.authorizationCodeGrant(config, currentUrl, {
     pkceCodeVerifier: codeVerifier,
     expectedState,
+    expectedNonce,
   });
   const claims = tokens.claims();
   if (!claims?.sub) {

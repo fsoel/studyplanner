@@ -30,10 +30,12 @@ export const sessions = sqliteTable("sessions", {
     .$defaultFn(() => new Date()),
 });
 
-// Short-lived CSRF state + PKCE verifier held during the OAuth login redirect.
+// Short-lived CSRF state + PKCE verifier + OIDC nonce held during login.
 export const oauthState = sqliteTable("oauth_state", {
   state: text("state").primaryKey(),
   codeVerifier: text("code_verifier").notNull(),
+  // Nullable for compatibility with OAuth attempts created before the migration.
+  nonce: text("nonce"),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
 });
 
