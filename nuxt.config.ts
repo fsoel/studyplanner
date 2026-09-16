@@ -1,3 +1,5 @@
+import packageJson from './package.json'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -14,7 +16,7 @@ export default defineNuxtConfig({
     public: {
       // 'backend' (default, uses the Nitro API) or 'local' (localStorage only, offline dev)
       storageMode: process.env.NUXT_PUBLIC_STORAGE_MODE || "backend",
+      releaseVersion: packageJson.version,
     },
   },
 })
-

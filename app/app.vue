@@ -1,5 +1,6 @@
 <template>
   <div
+    @click="accountMenuOpen = false"
     class="relative h-screen w-full bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col font-sans overflow-hidden"
   >
     <header
@@ -27,63 +28,95 @@
           Study Planner
         </h1>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="relative">
         <button
-          @click="toggleDark()"
-          :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-          class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center justify-center text-gray-700 dark:text-gray-200"
+          @click.stop="accountMenuOpen = !accountMenuOpen"
+          type="button"
+          aria-haspopup="menu"
+          :aria-expanded="accountMenuOpen"
+          aria-label="Open account menu"
+          class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-2.5 py-2 text-gray-700 transition hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
         >
-          <svg
-            v-if="isDark"
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <span
+            class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364l-1.414-1.414M6.05 6.05L4.636 4.636m12.728 0l-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            ></path>
-          </svg>
-          <svg
-            v-else
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            ></path>
+            {{ accountInitial }}
+          </span>
+          <span class="hidden max-w-32 truncate text-sm font-semibold sm:inline">
+            {{ accountLabel }}
+          </span>
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6" />
           </svg>
         </button>
-        <button
-          v-if="isBackend && isAuthenticated"
-          @click="logout()"
-          title="Sign out"
-          aria-label="Sign out"
-          class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition flex items-center justify-center text-gray-700 dark:text-gray-200"
+
+        <div
+          v-if="accountMenuOpen"
+          @click.stop
+          role="menu"
+          class="absolute right-0 top-full z-50 mt-2 w-72 origin-top-right rounded-2xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
         >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <div class="border-b border-gray-100 px-3 py-3 dark:border-gray-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Account
+            </p>
+            <p class="mt-1 truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+              {{ accountLabel }}
+            </p>
+            <p v-if="user?.email" class="truncate text-xs text-gray-500 dark:text-gray-400">
+              {{ user.email }}
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between px-3 py-3">
+            <div class="flex items-center gap-2">
+              <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
+              </svg>
+              <span class="text-sm font-medium">Dark mode</span>
+            </div>
+            <button
+              @click="toggleDark()"
+              type="button"
+              role="switch"
+              :aria-checked="isDark"
+              :aria-label="isDark ? 'Disable dark mode' : 'Enable dark mode'"
+              class="relative h-6 w-11 rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+              :class="isDark ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'"
+            >
+              <span
+                class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow transition-transform"
+                :class="isDark ? 'translate-x-5' : 'translate-x-0'"
+              ></span>
+            </button>
+          </div>
+
+          <button
+            @click="openSettings"
+            type="button"
+            role="menuitem"
+            class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            ></path>
-          </svg>
-        </button>
+            <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317a1.724 1.724 0 0 1 3.35 0 1.724 1.724 0 0 0 2.573 1.066 1.724 1.724 0 0 1 2.898 2.898 1.724 1.724 0 0 0 1.066 2.573 1.724 1.724 0 0 1 0 3.35 1.724 1.724 0 0 0-1.066 2.573 1.724 1.724 0 0 1-2.898 2.898 1.724 1.724 0 0 0-2.573 1.066 1.724 1.724 0 0 1-3.35 0 1.724 1.724 0 0 0-2.573-1.066 1.724 1.724 0 0 1-2.898-2.898 1.724 1.724 0 0 0-1.066-2.573 1.724 1.724 0 0 1 0-3.35 1.724 1.724 0 0 0 1.066-2.573 1.724 1.724 0 0 1 2.898-2.898 1.724 1.724 0 0 0 2.573 1.066Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            Settings
+          </button>
+
+          <button
+            v-if="isBackend && isAuthenticated"
+            @click="logout()"
+            type="button"
+            role="menuitem"
+            class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0-4-4m4 4H7m6 4v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1" />
+            </svg>
+            Sign out
+          </button>
+        </div>
       </div>
     </header>
 
@@ -114,6 +147,74 @@
       </div>
     </main>
 
+    <div
+      v-if="settingsOpen"
+      class="fixed inset-0 z-40 flex items-center justify-center bg-gray-950/50 p-4 backdrop-blur-sm"
+      @click.self="settingsOpen = false"
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
+        class="flex max-h-[min(640px,calc(100vh-2rem))] w-full max-w-3xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800"
+      >
+        <aside class="w-44 shrink-0 border-r border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900/50 sm:w-52 sm:p-4">
+          <p class="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            Settings
+          </p>
+          <nav class="mt-3" aria-label="Settings sections">
+            <button
+              type="button"
+              aria-current="page"
+              class="flex w-full items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5 text-left text-sm font-semibold text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              About
+            </button>
+          </nav>
+        </aside>
+
+        <div class="min-w-0 flex-1 overflow-y-auto">
+          <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 sm:px-7">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">About</p>
+              <h2 id="settings-title" class="mt-1 text-xl font-bold">Study Planner</h2>
+            </div>
+            <button
+              @click="settingsOpen = false"
+              type="button"
+              aria-label="Close settings"
+              class="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 6 12 12M6 18 18 6" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="p-5 sm:p-7">
+            <div class="flex items-start justify-between gap-4">
+              <p class="max-w-xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Study Planner helps you organize your modules, semesters, and progress in one place.
+                Your plans stay available across devices when you are signed in.
+              </p>
+              <span class="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                v{{ releaseVersion }}
+              </span>
+            </div>
+            <dl class="mt-6 border-t border-gray-100 pt-4 text-sm dark:border-gray-700">
+              <div class="flex items-center justify-between gap-4">
+                <dt class="text-gray-500 dark:text-gray-400">Current release</dt>
+                <dd class="font-semibold">{{ releaseVersion }}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <transition name="fade">
       <div
         v-if="isPageLoading"
@@ -138,7 +239,7 @@
 
 <script setup lang="ts">
 import { useDark, useToggle, useMediaQuery } from "@vueuse/core";
-import { nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import { useStudyPlanStore } from "./stores/studyPlan";
 import { useAuth } from "./composables/useAuth";
 import StudyPlanner from "./components/StudyPlanner.vue";
@@ -150,8 +251,24 @@ const toggleDark = useToggle(isDark);
 // Phones (portrait) get the dedicated mobile view; tablets keep the (denser) grid.
 const isMobile = useMediaQuery("(max-width: 767px)");
 const store = useStudyPlanStore();
-const { ready, isBackend, isAuthenticated, fetchMe, login, logout } = useAuth();
+const { ready, user, isBackend, isAuthenticated, fetchMe, login, logout } = useAuth();
+const runtimeConfig = useRuntimeConfig();
+const releaseVersion = runtimeConfig.public.releaseVersion;
 const isPageLoading = ref(true);
+const accountMenuOpen = ref(false);
+const settingsOpen = ref(false);
+const accountLabel = computed(() => {
+  if (user.value?.name) return user.value.name;
+  if (user.value?.email) return user.value.email;
+  if (!isBackend) return "Local mode";
+  return isAuthenticated.value ? "Signed in" : "Account";
+});
+const accountInitial = computed(() => accountLabel.value.trim().charAt(0).toUpperCase() || "A");
+
+function openSettings(): void {
+  accountMenuOpen.value = false;
+  settingsOpen.value = true;
+}
 
 onMounted(async () => {
   try {
