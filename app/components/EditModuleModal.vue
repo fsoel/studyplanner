@@ -39,7 +39,7 @@
           <input
             v-model="form.name"
             type="text"
-            class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+            class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
             placeholder="My New Elective"
           />
         </div>
@@ -54,7 +54,7 @@
             type="number"
             min="1"
             max="30"
-            class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+            class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
           />
         </div>
 
@@ -65,7 +65,7 @@
           >
           <select
             v-model="form.semesterId"
-            class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+            class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
           >
             <option
               v-for="sem in store.semesters"
@@ -112,7 +112,7 @@
           <button
             @click="submit"
             :disabled="!isValid"
-            class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors font-medium shadow-sm"
+            class="accent-bg rounded-lg px-5 py-2 font-medium text-white shadow-sm transition-colors disabled:opacity-50"
           >
             {{ isEditing ? "Save Changes" : "Add Module" }}
           </button>

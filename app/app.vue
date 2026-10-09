@@ -22,14 +22,21 @@
         <PlannerMobile v-if="isMobile" />
         <StudyPlanner v-else />
       </template>
-      <LoginScreen v-else-if="ready" :is-dark="isDark" @login="login" />
+      <LoginScreen
+        v-else-if="ready"
+        :is-dark="isDark"
+        :accent-color="accentColor"
+        @login="login"
+      />
     </main>
 
     <SettingsModal
       v-model="settingsOpen"
       :release-version="releaseVersion"
       :theme-mode="themeMode"
+      :accent-color="accentColor"
       @set-theme="setTheme"
+      @set-accent="setAccent"
     />
     <LoadingOverlay :visible="isPageLoading" />
   </div>
@@ -46,6 +53,7 @@ import LoginScreen from "./components/LoginScreen.vue";
 import PlannerMobile from "./components/PlannerMobile.vue";
 import SettingsModal from "./components/SettingsModal.vue";
 import StudyPlanner from "./components/StudyPlanner.vue";
+import type { AccentColor } from "./types";
 
 const colorMode = useColorMode({
   modes: {
@@ -55,6 +63,7 @@ const colorMode = useColorMode({
   },
 });
 const isDark = ref(false);
+const accentColor = ref<AccentColor>("blue");
 let themeObserver: MutationObserver | undefined;
 
 function syncThemeState(): void {
@@ -68,6 +77,23 @@ const themeMode = computed(() => {
 
 function setTheme(value: string): void {
   if (value === "light" || value === "dark" || value === "oled") colorMode.value = value;
+}
+
+function isAccentColor(value: string): value is AccentColor {
+  return ["blue", "green", "pink", "purple", "yellow"].includes(value);
+}
+
+function syncAccentState(): void {
+  const savedAccent = localStorage.getItem("studyplanner-accent");
+  if (savedAccent && isAccentColor(savedAccent)) accentColor.value = savedAccent;
+  document.documentElement.dataset.accent = accentColor.value;
+}
+
+function setAccent(value: string): void {
+  if (!isAccentColor(value)) return;
+  accentColor.value = value;
+  localStorage.setItem("studyplanner-accent", value);
+  document.documentElement.dataset.accent = value;
 }
 
 function cycleTheme(): void {
@@ -102,6 +128,7 @@ function openSettings(): void {
 
 onMounted(async () => {
   syncThemeState();
+  syncAccentState();
   themeObserver = new MutationObserver(syncThemeState);
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 

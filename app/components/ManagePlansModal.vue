@@ -45,7 +45,7 @@
             class="flex justify-between items-center p-4 border rounded-lg transition-colors shadow-sm"
             :class="
               plan.id === store.activePlanId
-                ? 'bg-blue-50/50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800'
+                ? 'accent-soft accent-soft-border'
                 : 'bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-600'
             "
           >
@@ -56,7 +56,7 @@
                 {{ plan.name }}
                 <span
                   v-if="plan.id === store.activePlanId"
-                  class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-200 font-medium"
+                  class="accent-badge text-xs px-2 py-0.5 rounded-full font-medium"
                   >Active</span
                 >
               </div>
@@ -114,7 +114,7 @@
               <input
                 v-model="form.name"
                 type="text"
-                class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+                class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                 placeholder="My Plan"
               />
             </div>
@@ -126,7 +126,7 @@
               >
               <select
                 v-model="form.templateId"
-                class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+                class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
               >
                 <option disabled value="">-- Select Course --</option>
                 <option v-for="t in store.templates" :key="t.id" :value="t.id">
@@ -144,7 +144,7 @@
               >
               <select
                 v-model="form.startSeason"
-                class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+                class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
               >
                 <option value="WS">Winter</option>
                 <option value="SS">Summer</option>
@@ -158,7 +158,7 @@
               <input
                 v-model="form.startYear"
                 type="number"
-                class="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+                class="accent-focus w-full rounded-lg border bg-gray-50 px-4 py-2 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                 placeholder="2025"
               />
             </div>
@@ -169,7 +169,7 @@
           <button
             @click="submit"
             :disabled="!isValid"
-            class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors font-semibold shadow-sm w-full md:w-auto"
+            class="accent-bg w-full rounded-lg px-6 py-2.5 font-semibold text-white shadow-sm transition-colors disabled:opacity-50 md:w-auto"
           >
             Create & Select Plan
           </button>

@@ -3,7 +3,7 @@
     class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-800 px-4 py-3 lg:px-6 lg:py-4 flex justify-between items-center z-20 shrink-0"
   >
     <div class="flex items-center gap-3">
-      <div class="p-2 bg-blue-600 rounded-lg shadow-inner">
+      <div class="accent-bg rounded-lg p-2 shadow-inner">
         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
@@ -13,7 +13,7 @@
           ></path>
         </svg>
       </div>
-      <h1 class="text-xl sm:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+      <h1 class="accent-gradient bg-clip-text text-xl font-extrabold text-transparent sm:text-2xl">
         Study Planner
       </h1>
     </div>
@@ -28,7 +28,7 @@
         aria-label="Open account menu"
         class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-2.5 py-2 text-gray-700 transition hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
       >
-        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+        <span class="accent-bg flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white">
           {{ accountInitial }}
         </span>
         <span class="hidden max-w-32 truncate text-sm font-semibold sm:inline">{{ accountLabel }}</span>
@@ -43,7 +43,7 @@
         type="button"
         role="button"
         :aria-label="nextThemeLabel"
-        class="rounded-xl border border-gray-200 bg-gray-100 p-2.5 text-gray-700 transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+        class="accent-ring rounded-xl border border-gray-200 bg-gray-100 p-2.5 text-gray-700 transition hover:bg-gray-200 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
       >
         <svg v-if="themeMode === 'oled'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="8" stroke-width="2" />

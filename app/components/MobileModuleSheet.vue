@@ -17,7 +17,7 @@
         <h3 class="min-w-0 flex-1 truncate text-base font-bold text-gray-900 dark:text-white">
           {{ module.name }}
         </h3>
-        <span class="shrink-0 text-sm font-bold text-blue-600 dark:text-blue-400">
+          <span class="accent-text shrink-0 text-sm font-bold">
           {{ module.cp }} CP
         </span>
       </div>
@@ -42,7 +42,7 @@
         </button>
 
         <button class="sheet-btn" @click="view = 'move'">
-          <span class="text-blue-500">↔</span> Move to semester…
+          <span class="accent-text-mid">↔</span> Move to semester…
         </button>
 
         <template v-if="module.isElective">

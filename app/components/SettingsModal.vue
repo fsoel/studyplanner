@@ -77,7 +77,7 @@
         @touchstart="onTouchStart"
         @touchend="onTouchEnd"
       >
-        <button type="button" @click="settingsMobileView = 'list'" class="flex items-center gap-1 px-5 pt-4 text-sm font-semibold text-blue-600 dark:text-blue-400 sm:hidden">
+        <button type="button" @click="settingsMobileView = 'list'" class="accent-text flex items-center gap-1 px-5 pt-4 text-sm font-semibold sm:hidden">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 18-6-6 6-6" />
           </svg>
@@ -85,11 +85,11 @@
         </button>
         <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 sm:px-7">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+            <p class="accent-text text-xs font-semibold uppercase tracking-wide">
               {{ settingsSection === 'about' ? 'About' : 'Appearance' }}
             </p>
             <h2 id="settings-title" class="mt-1 text-xl font-bold">
-              {{ settingsSection === 'about' ? 'Study Planner' : 'Theme' }}
+              {{ settingsSection === 'about' ? 'Study Planner' : 'Appearance' }}
             </h2>
           </div>
           <button @click="close" type="button" aria-label="Close settings" class="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100">
@@ -127,12 +127,32 @@
               id="theme-select"
               :value="themeMode"
               @change="handleThemeChange"
-              class="mt-5 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm font-medium text-gray-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+              class="accent-focus mt-5 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm font-medium text-gray-800 outline-none transition dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
             >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
               <option value="oled">Lights out</option>
             </select>
+
+            <label for="accent-select" class="mt-6 block text-sm font-semibold text-gray-900 dark:text-gray-100">Accent color</label>
+            <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
+              Choose the color used for primary actions, highlights, and progress indicators.
+            </p>
+            <div class="relative mt-5">
+              <span class="accent-bg pointer-events-none absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full" aria-hidden="true"></span>
+              <select
+                id="accent-select"
+                :value="accentColor"
+                @change="handleAccentChange"
+                class="accent-focus w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-sm font-medium capitalize text-gray-800 outline-none transition dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+              >
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="yellow">Yellow</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -143,16 +163,19 @@
 <script setup lang="ts">
 import { useMediaQuery } from "@vueuse/core";
 import { ref, watch } from "vue";
+import type { AccentColor } from "../types";
 
 const props = defineProps<{
   modelValue: boolean;
   releaseVersion: string;
   themeMode: string;
+  accentColor: AccentColor;
 }>();
 
 const emit = defineEmits<{
   "update:modelValue": [value: boolean];
   "set-theme": [value: string];
+  "set-accent": [value: string];
 }>();
 
 const isMobile = useMediaQuery("(max-width: 767px)");
@@ -166,7 +189,7 @@ function close(): void {
 
 function sectionClass(section: "about" | "appearance"): string {
   return settingsSection.value === section
-    ? "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+    ? "accent-soft accent-soft-text"
     : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800";
 }
 
@@ -177,6 +200,10 @@ function openSection(section: "about" | "appearance"): void {
 
 function handleThemeChange(event: Event): void {
   emit("set-theme", (event.target as HTMLSelectElement).value);
+}
+
+function handleAccentChange(event: Event): void {
+  emit("set-accent", (event.target as HTMLSelectElement).value);
 }
 
 function onTouchStart(event: TouchEvent): void {

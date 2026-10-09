@@ -53,7 +53,7 @@
           <div class="text-[10px] font-bold uppercase tracking-wide text-gray-400">
             Planned
           </div>
-          <div class="text-lg font-black text-blue-600 dark:text-blue-400">
+          <div class="accent-text text-lg font-black">
             {{ stats.planned }}
             <span class="text-xs font-semibold text-gray-400">CP</span>
           </div>
@@ -143,7 +143,7 @@
           <polyline
             :points="chart.planned"
             fill="none"
-            stroke="#3b82f6"
+            class="accent-planned-stroke"
             stroke-width="2.5"
             stroke-linejoin="round"
             stroke-linecap="round"
@@ -166,7 +166,7 @@
           Recommended
         </span>
         <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-          <svg width="22" height="8"><line x1="0" y1="4" x2="22" y2="4" stroke="#3b82f6" stroke-width="3" /></svg>
+          <svg width="22" height="8"><line class="accent-planned-stroke" x1="0" y1="4" x2="22" y2="4" stroke-width="3" /></svg>
           Your plan (placed)
         </span>
         <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300">

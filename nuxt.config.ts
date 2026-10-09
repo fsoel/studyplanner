@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@vueuse/nuxt'
   ],
+  css: ['~/assets/css/main.css'],
   runtimeConfig: {
     // Server-only settings are read directly from process.env at runtime via
     // server/utils/config.ts (so plain env var names work in Docker). Only the

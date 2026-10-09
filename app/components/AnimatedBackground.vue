@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
-const props = defineProps<{ isDark?: boolean }>();
+const props = defineProps<{ isDark?: boolean; accentColor?: string }>();
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 
@@ -45,10 +45,33 @@ const mouse = { x: -9999, y: -9999 };
 const LINK_DIST = 130; // px between particles to draw a link
 const MOUSE_DIST = 190; // px around cursor to react
 
-const rgb = () =>
-  props.isDark
-    ? { dot: "147,197,253", line: "129,140,248" } // blue-300 / indigo-400
-    : { dot: "79,70,229", line: "99,102,241" }; // indigo-600 / indigo-500
+const accentParticleColors: Record<string, { light: { dot: string; line: string }; dark: { dot: string; line: string } }> = {
+  blue: {
+    light: { dot: "79,70,229", line: "99,102,241" },
+    dark: { dot: "147,197,253", line: "129,140,248" },
+  },
+  green: {
+    light: { dot: "22,163,74", line: "16,185,129" },
+    dark: { dot: "134,239,172", line: "110,231,183" },
+  },
+  pink: {
+    light: { dot: "219,39,119", line: "236,72,153" },
+    dark: { dot: "249,168,212", line: "244,114,182" },
+  },
+  purple: {
+    light: { dot: "126,34,206", line: "147,51,234" },
+    dark: { dot: "216,180,254", line: "192,132,252" },
+  },
+  yellow: {
+    light: { dot: "202,138,4", line: "234,179,8" },
+    dark: { dot: "253,224,71", line: "250,204,21" },
+  },
+};
+
+const rgb = () => {
+  const palette = accentParticleColors[props.accentColor ?? "blue"] ?? accentParticleColors.blue!;
+  return props.isDark ? palette.dark : palette.light;
+};
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
@@ -222,7 +245,7 @@ onBeforeUnmount(() => {
   height: 42vmax;
   left: -12vmax;
   top: -14vmax;
-  background: radial-gradient(circle at 30% 30%, #6366f1, transparent 70%);
+  background: radial-gradient(circle at 30% 30%, rgb(var(--accent-orb-1)), transparent 70%);
   animation: drift-1 26s ease-in-out infinite;
 }
 
@@ -231,7 +254,7 @@ onBeforeUnmount(() => {
   height: 38vmax;
   right: -12vmax;
   top: 10vmax;
-  background: radial-gradient(circle at 60% 40%, #a855f7, transparent 70%);
+  background: radial-gradient(circle at 60% 40%, rgb(var(--accent-orb-2)), transparent 70%);
   animation: drift-2 32s ease-in-out infinite;
 }
 
@@ -240,7 +263,7 @@ onBeforeUnmount(() => {
   height: 46vmax;
   left: 20vmax;
   bottom: -20vmax;
-  background: radial-gradient(circle at 50% 50%, #0ea5e9, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgb(var(--accent-orb-3)), transparent 70%);
   animation: drift-3 30s ease-in-out infinite;
 }
 

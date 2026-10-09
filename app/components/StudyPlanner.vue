@@ -11,7 +11,7 @@
           >
           <select
             v-model="store.activePlanId"
-            class="p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 min-w-[220px] outline-none font-semibold text-sm transition-all hover:border-gray-300 dark:hover:border-gray-500"
+            class="accent-focus min-w-[220px] rounded-lg border bg-gray-50 p-2.5 text-sm font-semibold outline-none transition-all hover:border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500"
           >
             <option
               v-for="plan in store.userPlans"
@@ -36,7 +36,7 @@
             <div
               class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm"
             >
-              <span class="text-xs font-bold text-blue-600 dark:text-blue-400"
+              <span class="accent-text text-xs font-bold"
                 >{{ store.activePlan.config.startSeason }}
                 {{ store.activePlan.config.startYear }}</span
               >
@@ -85,18 +85,18 @@
               </svg>
             </label>
             <div
-              class="h-9 flex items-center gap-3 bg-gray-50 dark:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm transition-colors group-hover:border-blue-400 dark:group-hover:border-blue-500"
+              class="accent-hover-border flex h-9 items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 shadow-sm transition-colors dark:border-gray-600 dark:bg-gray-700/50"
             >
               <div
                 class="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
               >
                 <div
-                  class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                  class="accent-gradient accent-glow h-full transition-all duration-1000 ease-out"
                   :style="{ width: `${store.progressPercent}%` }"
                 ></div>
               </div>
               <span
-                class="text-xs font-black text-blue-600 dark:text-blue-400 w-8 text-right"
+                class="accent-text w-8 text-right text-xs font-black"
                 >{{ store.progressPercent }}%</span
               >
             </div>
@@ -106,7 +106,7 @@
 
       <button
         @click="showPlanManager = true"
-        class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 px-4 py-2.5 rounded-lg font-bold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all ml-auto flex items-center gap-2 shadow-sm text-sm"
+        class="accent-panel ml-auto flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-bold shadow-sm transition-all"
       >
         <svg
           class="w-4 h-4"
@@ -145,7 +145,7 @@
               :class="[
                 store.currentSemesterInfo.season === sem.season &&
                 store.currentSemesterInfo.year === sem.year
-                  ? 'current-semester-highlight bg-blue-50/70 dark:bg-blue-900/20'
+                  ? 'current-semester-highlight accent-column-header'
                   : 'bg-gray-50/50 dark:bg-gray-800/50',
               ]"
             >
@@ -163,13 +163,13 @@
                     store.currentSemesterInfo.season === sem.season &&
                     store.currentSemesterInfo.year === sem.year
                   "
-                  class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                  class="accent-badge ml-2 inline-flex items-center rounded px-2 py-0.5 text-xs font-medium"
                 >
                   Current
                 </span>
               </div>
               <div
-                class="inline-flex items-center justify-center bg-blue-100/80 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-blue-800/50"
+                class="accent-badge-subtle accent-soft-border inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-bold"
               >
                 {{ getSemesterCpSum(sem.id) }} CP
               </div>
@@ -200,7 +200,7 @@
             >
               <button
                 @click="store.addSemester"
-                class="bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 px-5 py-3 rounded-xl font-bold hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all shadow-sm w-full flex items-center justify-center gap-2 h-full"
+                class="accent-panel flex h-full w-full items-center justify-center gap-2 rounded-xl border px-5 py-3 font-bold shadow-sm transition-all"
               >
                 <svg
                   class="w-5 h-5"
@@ -251,7 +251,7 @@
                         row.subCategory?.id ?? null,
                       )
                     "
-                    class="shrink-0 text-[10px] bg-blue-100 hover:bg-blue-200 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-800/60 px-2 py-1 rounded transition-colors font-bold"
+                    class="accent-badge-subtle shrink-0 rounded px-2 py-1 text-[10px] font-bold transition-colors"
                     title="Add Elective"
                   >
                     + Add
@@ -326,12 +326,12 @@
             <td
               v-for="sem in store.semesters"
               :key="sem.id"
-              class="p-2 xl:p-3 border-r border-gray-50 dark:border-gray-700/30 hover:bg-blue-50/30 dark:hover:bg-gray-700/50 transition-colors"
+              class="accent-hover-cell border-r border-gray-50 p-2 transition-colors dark:border-gray-700/30 xl:p-3"
               :class="[
                 row.isSummary ? 'align-middle' : 'align-top',
                 store.currentSemesterInfo.season === sem.season &&
                 store.currentSemesterInfo.year === sem.year
-                  ? 'current-semester-highlight bg-blue-50/30 dark:bg-blue-900/10'
+                  ? 'current-semester-highlight accent-column-cell'
                   : 'bg-white dark:bg-gray-800/30',
               ]"
             >
@@ -405,7 +405,7 @@
                       row.subCategory?.id ?? null,
                     )
                   "
-                  class="min-h-[84px] xl:min-h-[120px] h-full flex flex-col items-center justify-center border-2 border-transparent hover:border-blue-300 dark:hover:border-blue-700 rounded-lg transition-all"
+                  class="accent-dropzone-hover flex h-full min-h-[84px] flex-col items-center justify-center rounded-lg border-2 border-transparent transition-all xl:min-h-[120px]"
                 >
                   <template #item="{ element }">
                     <ModuleCard
@@ -455,7 +455,7 @@
       </p>
       <button
         @click="showPlanManager = true"
-        class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition shadow-md hover:shadow-lg flex items-center gap-2"
+      class="accent-bg flex items-center gap-2 rounded-xl px-6 py-3 text-lg font-bold text-white shadow-md transition hover:shadow-lg"
       >
         <svg
           class="w-5 h-5"

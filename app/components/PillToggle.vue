@@ -5,7 +5,7 @@
     role="switch"
     :aria-checked="modelValue"
     :aria-label="ariaLabel"
-    class="relative h-6 w-11 rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+    class="accent-ring relative h-6 w-11 rounded-full transition focus:outline-none focus:ring-offset-2 dark:focus:ring-offset-gray-800"
     :class="modelValue ? activeClass : inactiveClass"
   >
     <span
@@ -25,7 +25,7 @@ withDefaults(
   }>(),
   {
     ariaLabel: "Toggle option",
-    activeClass: "bg-blue-600",
+    activeClass: "accent-bg",
     inactiveClass: "bg-gray-300 dark:bg-gray-600",
   },
 );

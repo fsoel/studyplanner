@@ -1,0 +1,343 @@
+/*
+ * Accent tokens
+ *
+ * Components should use the semantic accent classes below instead of choosing
+ * a palette shade themselves. Each theme keeps a complete shade scale so
+ * backgrounds, borders, text, gradients, and focus states can vary naturally.
+ */
+:root,
+html[data-accent="blue"] {
+  --accent-50: 239 246 255;
+  --accent-100: 219 234 254;
+  --accent-200: 191 219 254;
+  --accent-300: 147 197 253;
+  --accent-400: 96 165 250;
+  --accent-500: 59 130 246;
+  --accent-600: 37 99 235;
+  --accent-700: 29 78 216;
+  --accent-800: 30 64 175;
+  --accent-900: 30 58 138;
+  --accent-950: 23 37 84;
+  --accent-gradient-start: 59 130 246;
+  --accent-gradient-end: 79 70 229;
+  --accent-orb-1: 99 102 241;
+  --accent-orb-2: 168 85 247;
+  --accent-orb-3: 14 165 233;
+}
+
+html[data-accent="green"] {
+  --accent-50: 240 253 244;
+  --accent-100: 220 252 231;
+  --accent-200: 187 247 208;
+  --accent-300: 134 239 172;
+  --accent-400: 74 222 128;
+  --accent-500: 34 197 94;
+  --accent-600: 22 163 74;
+  --accent-700: 21 128 61;
+  --accent-800: 22 101 52;
+  --accent-900: 20 83 45;
+  --accent-950: 5 46 22;
+  --accent-gradient-start: 34 197 94;
+  --accent-gradient-end: 5 150 105;
+  --accent-orb-1: 16 185 129;
+  --accent-orb-2: 34 197 94;
+  --accent-orb-3: 132 204 22;
+}
+
+html[data-accent="pink"] {
+  --accent-50: 253 242 248;
+  --accent-100: 252 231 243;
+  --accent-200: 251 207 232;
+  --accent-300: 249 168 212;
+  --accent-400: 244 114 182;
+  --accent-500: 236 72 153;
+  --accent-600: 219 39 119;
+  --accent-700: 190 24 93;
+  --accent-800: 157 23 77;
+  --accent-900: 131 24 67;
+  --accent-950: 80 7 36;
+  --accent-gradient-start: 236 72 153;
+  --accent-gradient-end: 225 29 72;
+  --accent-orb-1: 244 114 182;
+  --accent-orb-2: 217 70 239;
+  --accent-orb-3: 251 113 133;
+}
+
+html[data-accent="purple"] {
+  --accent-50: 250 245 255;
+  --accent-100: 243 232 255;
+  --accent-200: 233 213 255;
+  --accent-300: 216 180 254;
+  --accent-400: 192 132 252;
+  --accent-500: 168 85 247;
+  --accent-600: 147 51 234;
+  --accent-700: 126 34 206;
+  --accent-800: 107 33 168;
+  --accent-900: 88 28 135;
+  --accent-950: 59 7 100;
+  --accent-gradient-start: 168 85 247;
+  --accent-gradient-end: 124 58 237;
+  --accent-orb-1: 168 85 247;
+  --accent-orb-2: 139 92 246;
+  --accent-orb-3: 99 102 241;
+}
+
+html[data-accent="yellow"] {
+  --accent-50: 254 252 232;
+  --accent-100: 254 249 195;
+  --accent-200: 254 240 138;
+  --accent-300: 253 224 71;
+  --accent-400: 250 204 21;
+  --accent-500: 234 179 8;
+  --accent-600: 202 138 4;
+  --accent-700: 161 98 7;
+  --accent-800: 133 77 14;
+  --accent-900: 113 63 18;
+  --accent-950: 66 32 6;
+  --accent-gradient-start: 234 179 8;
+  --accent-gradient-end: 217 119 6;
+  --accent-orb-1: 250 204 21;
+  --accent-orb-2: 245 158 11;
+  --accent-orb-3: 249 115 22;
+}
+
+.accent-bg {
+  background-color: rgb(var(--accent-600));
+}
+
+.accent-bg:hover {
+  background-color: rgb(var(--accent-700));
+}
+
+.accent-hover-border:hover {
+  border-color: rgb(var(--accent-400));
+}
+
+.dark .accent-hover-border:hover {
+  border-color: rgb(var(--accent-500));
+}
+
+.accent-bg-selected {
+  background-color: rgb(var(--accent-600));
+  border-color: rgb(var(--accent-600));
+}
+
+.accent-bg-selected:hover {
+  background-color: rgb(var(--accent-700));
+  border-color: rgb(var(--accent-700));
+}
+
+.dark .accent-bg-selected {
+  background-color: rgb(var(--accent-500));
+  border-color: rgb(var(--accent-500));
+}
+
+.accent-text {
+  color: rgb(var(--accent-600));
+}
+
+.dark .accent-text {
+  color: rgb(var(--accent-400));
+}
+
+.accent-text-mid {
+  color: rgb(var(--accent-500));
+}
+
+.dark .accent-text-mid {
+  color: rgb(var(--accent-300));
+}
+
+.accent-text-strong {
+  color: rgb(var(--accent-800));
+}
+
+.dark .accent-text-strong {
+  color: rgb(var(--accent-200));
+}
+
+.accent-soft {
+  background-color: rgb(var(--accent-50));
+}
+
+.accent-soft:hover {
+  background-color: rgb(var(--accent-100));
+}
+
+.dark .accent-soft {
+  background-color: rgb(var(--accent-900) / 0.3);
+}
+
+.dark .accent-soft:hover {
+  background-color: rgb(var(--accent-800) / 0.4);
+}
+
+.accent-soft-text {
+  color: rgb(var(--accent-800));
+}
+
+.dark .accent-soft-text {
+  color: rgb(var(--accent-300));
+}
+
+.accent-soft-border {
+  border-color: rgb(var(--accent-200));
+}
+
+.dark .accent-soft-border {
+  border-color: rgb(var(--accent-800) / 0.5);
+}
+
+.accent-border {
+  border-color: rgb(var(--accent-300));
+}
+
+.dark .accent-border {
+  border-color: rgb(var(--accent-700));
+}
+
+.accent-panel {
+  background-color: rgb(var(--accent-50));
+  color: rgb(var(--accent-600));
+  border-color: rgb(var(--accent-200));
+}
+
+.accent-panel:hover {
+  background-color: rgb(var(--accent-100));
+}
+
+.dark .accent-panel {
+  background-color: rgb(var(--accent-500) / 0.1);
+  color: rgb(var(--accent-400));
+  border-color: rgb(var(--accent-500) / 0.3);
+}
+
+.dark .accent-panel:hover {
+  background-color: rgb(var(--accent-500) / 0.2);
+}
+
+.accent-badge {
+  background-color: rgb(var(--accent-100));
+  color: rgb(var(--accent-800));
+}
+
+.dark .accent-badge {
+  background-color: rgb(var(--accent-900));
+  color: rgb(var(--accent-300));
+}
+
+.accent-badge-subtle {
+  background-color: rgb(var(--accent-100));
+  color: rgb(var(--accent-800));
+}
+
+.dark .accent-badge-subtle {
+  background-color: rgb(var(--accent-900) / 0.4);
+  color: rgb(var(--accent-300));
+}
+
+.accent-outline {
+  border-color: rgb(var(--accent-300));
+  color: rgb(var(--accent-600));
+}
+
+.dark .accent-outline {
+  border-color: rgb(var(--accent-700));
+  color: rgb(var(--accent-400));
+}
+
+.accent-gradient {
+  background-image: linear-gradient(
+    to right,
+    rgb(var(--accent-gradient-start)),
+    rgb(var(--accent-gradient-end))
+  );
+}
+
+.accent-shadow {
+  box-shadow: 0 10px 15px -3px rgb(var(--accent-600) / 0.3),
+    0 4px 6px -4px rgb(var(--accent-600) / 0.2);
+}
+
+.accent-glow {
+  box-shadow: 0 0 8px rgb(var(--accent-500) / 0.5);
+}
+
+.accent-spinner {
+  border-color: rgb(var(--accent-200));
+  border-top-color: rgb(var(--accent-600));
+}
+
+.dark .accent-spinner {
+  border-color: rgb(var(--accent-900));
+  border-top-color: rgb(var(--accent-400));
+}
+
+.accent-focus:focus {
+  border-color: rgb(var(--accent-500));
+  outline: 2px solid rgb(var(--accent-500) / 0.5);
+  outline-offset: 0;
+}
+
+.accent-ring:focus {
+  outline: 2px solid rgb(var(--accent-500));
+  outline-offset: 2px;
+}
+
+.accent-column-header {
+  background-color: rgb(var(--accent-50) / 0.7);
+}
+
+.accent-column-cell {
+  background-color: rgb(var(--accent-50) / 0.3);
+}
+
+.dark .accent-column-header {
+  background-color: rgb(var(--accent-900) / 0.2);
+}
+
+.dark .accent-column-cell {
+  background-color: rgb(var(--accent-900) / 0.1);
+}
+
+.accent-stroke {
+  stroke: rgb(var(--accent-500));
+}
+
+.accent-planned-stroke {
+  stroke: rgb(var(--accent-500));
+}
+
+/* The passed series is intentionally green, so planned needs a contrasting
+   blue when green is selected as the application accent. */
+html[data-accent="green"] .accent-planned-stroke {
+  stroke: rgb(59 130 246);
+}
+
+.accent-hover-cell:hover {
+  background-color: rgb(var(--accent-50) / 0.3);
+}
+
+.dark .accent-hover-cell:hover {
+  background-color: rgb(var(--accent-700) / 0.5);
+}
+
+.accent-dropzone-hover:hover {
+  border-color: rgb(var(--accent-300));
+}
+
+.dark .accent-dropzone-hover:hover {
+  border-color: rgb(var(--accent-700));
+}
+
+.accent-orb-1 {
+  --accent-orb-rgb: var(--accent-orb-1);
+}
+
+.accent-orb-2 {
+  --accent-orb-rgb: var(--accent-orb-2);
+}
+
+.accent-orb-3 {
+  --accent-orb-rgb: var(--accent-orb-3);
+}

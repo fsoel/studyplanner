@@ -6,7 +6,7 @@
         <div class="flex items-center gap-2">
           <select
             v-model="store.activePlanId"
-            class="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            class="accent-focus min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           >
             <option v-for="plan in store.userPlans" :key="plan.id" :value="plan.id">
               {{ plan.name }}
@@ -15,7 +15,7 @@
           <button
             @click="showPlanManager = true"
             title="Manage plans"
-            class="shrink-0 rounded-lg border border-indigo-100 bg-indigo-50 p-2.5 text-indigo-600 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-400"
+            class="accent-panel shrink-0 rounded-lg border p-2.5"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -32,11 +32,11 @@
           </span>
           <span class="h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600">
             <span
-              class="block h-full bg-gradient-to-r from-blue-500 to-indigo-600"
+              class="accent-gradient block h-full"
               :style="{ width: `${store.progressPercent}%` }"
             ></span>
           </span>
-          <span class="shrink-0 text-xs font-black text-blue-600 dark:text-blue-400">
+          <span class="accent-text shrink-0 text-xs font-black">
             {{ store.progressPercent }}%
           </span>
         </button>
@@ -63,7 +63,7 @@
             </button>
             <button
               @click="addSemester"
-              class="shrink-0 rounded-full border border-dashed border-blue-300 px-3 py-1.5 text-xs font-bold text-blue-600 dark:border-blue-700 dark:text-blue-400"
+            class="accent-outline shrink-0 rounded-full border border-dashed px-3 py-1.5 text-xs font-bold"
             >
               ＋
             </button>
@@ -82,7 +82,7 @@
             Semester {{ selectedIndex + 1 }}
             <span
               v-if="isSelectedCurrent"
-              class="ml-1 rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+              class="accent-badge ml-1 rounded px-1.5 py-0.5 text-[10px] font-bold"
               >Current</span
             >
           </span>
@@ -131,7 +131,7 @@
               <button
                 v-if="entry.row.canAddElective"
                 @click="openAddElective(entry.row)"
-                class="rounded bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
+                class="accent-badge-subtle rounded px-2 py-1 text-[10px] font-bold"
               >
                 + Add
               </button>
@@ -197,7 +197,7 @@
       </p>
       <button
         @click="showPlanManager = true"
-        class="rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-md hover:bg-blue-700"
+        class="accent-bg rounded-xl px-5 py-3 font-bold text-white shadow-md"
       >
         Create New Plan
       </button>
@@ -315,10 +315,10 @@ const isSelectedCurrent = computed(
 
 const pillClasses = (sem: Semester) => {
   if (sem.id === selectedSemesterId.value) {
-    return "border-blue-600 bg-blue-600 text-white dark:border-blue-500 dark:bg-blue-500";
+    return "accent-bg-selected text-white";
   }
   if (sem.id === currentSemesterId.value) {
-    return "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
+    return "accent-soft accent-outline";
   }
   return "border-gray-200 bg-white text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300";
 };

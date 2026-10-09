@@ -1,3 +1,5 @@
+export type AccentColor = "blue" | "green" | "pink" | "purple" | "yellow";
+
 export interface CpBoundedElective {
   minElectiveCp?: number;
   maxElectiveCp?: number;

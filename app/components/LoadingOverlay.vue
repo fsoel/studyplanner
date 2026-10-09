@@ -7,7 +7,7 @@
       aria-busy="true"
     >
       <div class="flex flex-col items-center gap-4 px-6 py-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-800/90 shadow-xl">
-        <div class="h-11 w-11 rounded-full border-4 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 animate-spin"></div>
+        <div class="accent-spinner h-11 w-11 animate-spin rounded-full border-4"></div>
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">
           Loading your study planner...
         </p>
