@@ -86,29 +86,6 @@
             </p>
           </div>
 
-          <div class="flex items-center justify-between px-3 py-3">
-            <div class="flex items-center gap-2">
-              <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
-              </svg>
-              <span class="text-sm font-medium">Dark mode</span>
-            </div>
-            <button
-              @click="toggleDark()"
-              type="button"
-              role="switch"
-              :aria-checked="isDark"
-              :aria-label="isDark ? 'Disable dark mode' : 'Enable dark mode'"
-              class="relative h-6 w-11 rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-              :class="isDark ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'"
-            >
-              <span
-                class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow transition-transform"
-                :class="isDark ? 'translate-x-5' : 'translate-x-0'"
-              ></span>
-            </button>
-          </div>
-
           <button
             @click="openSettings"
             type="button"
@@ -183,8 +160,26 @@
           <nav class="mt-3" aria-label="Settings sections">
             <button
               type="button"
-              aria-current="page"
-              class="flex w-full items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5 text-left text-sm font-semibold text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+              :aria-current="settingsSection === 'appearance' ? 'page' : undefined"
+              @click="settingsSection = 'appearance'"
+              class="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition"
+              :class="settingsSection === 'appearance'
+                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300'
+                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
+              </svg>
+              Appearance
+            </button>
+            <button
+              type="button"
+              :aria-current="settingsSection === 'about' ? 'page' : undefined"
+              @click="settingsSection = 'about'"
+              class="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition"
+              :class="settingsSection === 'about'
+                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300'
+                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -197,8 +192,12 @@
         <div class="min-w-0 flex-1 overflow-y-auto">
           <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 sm:px-7">
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">About</p>
-              <h2 id="settings-title" class="mt-1 text-xl font-bold">Study Planner</h2>
+              <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                {{ settingsSection === 'about' ? 'About' : 'Appearance' }}
+              </p>
+              <h2 id="settings-title" class="mt-1 text-xl font-bold">
+                {{ settingsSection === 'about' ? 'Study Planner' : 'Theme' }}
+              </h2>
             </div>
             <button
               @click="settingsOpen = false"
@@ -212,7 +211,7 @@
             </button>
           </div>
 
-          <div class="p-5 sm:p-7">
+          <div v-if="settingsSection === 'about'" class="p-5 sm:p-7">
             <div class="flex items-start justify-between gap-4">
               <p class="max-w-xl text-sm leading-6 text-gray-600 dark:text-gray-300">
                 Study Planner helps you organize your modules, semesters, and progress in one place.
@@ -228,6 +227,26 @@
                 <dd class="font-semibold">{{ releaseVersion }}</dd>
               </div>
             </dl>
+          </div>
+
+          <div v-else class="p-5 sm:p-7">
+            <div class="max-w-xl">
+              <label for="theme-select" class="block text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Theme
+              </label>
+              <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Choose the appearance used throughout Study Planner.
+              </p>
+              <select
+                id="theme-select"
+                :value="themeMode"
+                @change="setTheme(($event.target as HTMLSelectElement).value)"
+                class="mt-5 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm font-medium text-gray-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+              >
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
           </div>
         </div>
       </section>
@@ -256,7 +275,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDark, useToggle, useMediaQuery } from "@vueuse/core";
+import { useColorMode, useMediaQuery } from "@vueuse/core";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useStudyPlanStore } from "./stores/studyPlan";
 import { useAuth } from "./composables/useAuth";
@@ -264,18 +283,23 @@ import StudyPlanner from "./components/StudyPlanner.vue";
 import PlannerMobile from "./components/PlannerMobile.vue";
 import AnimatedBackground from "./components/AnimatedBackground.vue";
 
-const persistedDark = useDark();
+const colorMode = useColorMode();
 const isDark = ref(false);
-const togglePersistedDark = useToggle(persistedDark);
 let themeObserver: MutationObserver | undefined;
 
 function syncThemeState(): void {
   isDark.value = document.documentElement.classList.contains("dark");
 }
 
+const themeMode = computed(() => colorMode.value === "dark" ? "dark" : "light");
+
 function toggleDark(): void {
-  togglePersistedDark();
+  colorMode.value = isDark.value ? "light" : "dark";
   syncThemeState();
+}
+
+function setTheme(value: string): void {
+  if (value === "light" || value === "dark") colorMode.value = value;
 }
 // Phones (portrait) get the dedicated mobile view; tablets keep the (denser) grid.
 const isMobile = useMediaQuery("(max-width: 767px)");
@@ -286,6 +310,7 @@ const releaseVersion = runtimeConfig.public.releaseVersion;
 const isPageLoading = ref(true);
 const accountMenuOpen = ref(false);
 const settingsOpen = ref(false);
+const settingsSection = ref<"about" | "appearance">("about");
 const accountLabel = computed(() => {
   if (user.value?.name) return user.value.name;
   if (user.value?.email) return user.value.email;
