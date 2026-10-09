@@ -30,6 +30,7 @@
       </div>
       <div class="relative">
         <button
+          v-if="isAuthenticated"
           @click.stop="accountMenuOpen = !accountMenuOpen"
           type="button"
           aria-haspopup="menu"
@@ -50,8 +51,25 @@
           </svg>
         </button>
 
+        <button
+          v-else
+          @click="toggleDark()"
+          type="button"
+          role="switch"
+          :aria-checked="isDark"
+          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          class="rounded-xl border border-gray-200 bg-gray-100 p-2.5 text-gray-700 transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+        >
+          <svg v-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+          </svg>
+          <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
+          </svg>
+        </button>
+
         <div
-          v-if="accountMenuOpen"
+          v-if="isAuthenticated && accountMenuOpen"
           @click.stop
           role="menu"
           class="absolute right-0 top-full z-50 mt-2 w-72 origin-top-right rounded-2xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
@@ -239,15 +257,26 @@
 
 <script setup lang="ts">
 import { useDark, useToggle, useMediaQuery } from "@vueuse/core";
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useStudyPlanStore } from "./stores/studyPlan";
 import { useAuth } from "./composables/useAuth";
 import StudyPlanner from "./components/StudyPlanner.vue";
 import PlannerMobile from "./components/PlannerMobile.vue";
 import AnimatedBackground from "./components/AnimatedBackground.vue";
 
-const isDark = useDark();
-const toggleDark = useToggle(isDark);
+const persistedDark = useDark();
+const isDark = ref(false);
+const togglePersistedDark = useToggle(persistedDark);
+let themeObserver: MutationObserver | undefined;
+
+function syncThemeState(): void {
+  isDark.value = document.documentElement.classList.contains("dark");
+}
+
+function toggleDark(): void {
+  togglePersistedDark();
+  syncThemeState();
+}
 // Phones (portrait) get the dedicated mobile view; tablets keep the (denser) grid.
 const isMobile = useMediaQuery("(max-width: 767px)");
 const store = useStudyPlanStore();
@@ -271,6 +300,10 @@ function openSettings(): void {
 }
 
 onMounted(async () => {
+  syncThemeState();
+  themeObserver = new MutationObserver(syncThemeState);
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
   try {
     const authed = await fetchMe();
     if (authed) {
@@ -287,6 +320,8 @@ onMounted(async () => {
     isPageLoading.value = false;
   }
 });
+
+onBeforeUnmount(() => themeObserver?.disconnect());
 </script>
 
 <style scoped>
