@@ -151,13 +151,16 @@
         role="dialog"
         aria-modal="true"
         aria-labelledby="settings-title"
-        class="flex max-h-[min(640px,calc(100vh-2rem))] w-full max-w-3xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800"
+        class="flex h-[min(600px,calc(100vh-2rem))] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800 sm:flex-row"
       >
-        <aside class="w-44 shrink-0 border-r border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900/50 sm:w-52 sm:p-4">
+        <aside class="hidden w-52 shrink-0 border-r border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/50 sm:block">
           <p class="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
             Settings
           </p>
-          <nav class="mt-3" aria-label="Settings sections">
+          <nav
+            class="mt-3 max-h-40 overflow-y-auto sm:max-h-none sm:overflow-visible"
+            aria-label="Settings sections"
+          >
             <button
               type="button"
               :aria-current="settingsSection === 'appearance' ? 'page' : undefined"
@@ -189,7 +192,66 @@
           </nav>
         </aside>
 
-        <div class="min-w-0 flex-1 overflow-y-auto">
+        <div
+          v-if="settingsMobileView === 'list'"
+          class="flex min-h-0 flex-1 flex-col bg-gray-50 dark:bg-gray-900/50 sm:hidden"
+        >
+          <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Settings
+            </p>
+            <h2 class="mt-1 text-xl font-bold">Settings</h2>
+          </div>
+          <nav class="overflow-y-auto p-3" aria-label="Settings sections">
+            <button
+              type="button"
+              @click="openSettingsSection('appearance')"
+              class="flex w-full items-center justify-between rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold text-gray-800 shadow-sm dark:bg-gray-800 dark:text-gray-100"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
+                </svg>
+                Appearance
+              </span>
+              <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              @click="openSettingsSection('about')"
+              class="mt-2 flex w-full items-center justify-between rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold text-gray-800 shadow-sm dark:bg-gray-800 dark:text-gray-100"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                About
+              </span>
+              <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7" />
+              </svg>
+            </button>
+          </nav>
+        </div>
+
+        <div
+          v-if="settingsMobileView === 'detail'"
+          class="min-w-0 flex-1 overflow-y-auto sm:block"
+          @touchstart="onSettingsTouchStart"
+          @touchend="onSettingsTouchEnd"
+        >
+          <button
+            type="button"
+            @click="settingsMobileView = 'list'"
+            class="flex items-center gap-1 px-5 pt-4 text-sm font-semibold text-blue-600 dark:text-blue-400 sm:hidden"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 18-6-6 6-6" />
+            </svg>
+            Settings
+          </button>
           <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 sm:px-7">
             <div>
               <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
@@ -276,7 +338,7 @@
 
 <script setup lang="ts">
 import { useColorMode, useMediaQuery } from "@vueuse/core";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useStudyPlanStore } from "./stores/studyPlan";
 import { useAuth } from "./composables/useAuth";
 import StudyPlanner from "./components/StudyPlanner.vue";
@@ -311,6 +373,8 @@ const isPageLoading = ref(true);
 const accountMenuOpen = ref(false);
 const settingsOpen = ref(false);
 const settingsSection = ref<"about" | "appearance">("about");
+const settingsMobileView = ref<"list" | "detail">("detail");
+const settingsTouchStartX = ref<number | null>(null);
 const accountLabel = computed(() => {
   if (user.value?.name) return user.value.name;
   if (user.value?.email) return user.value.email;
@@ -321,7 +385,30 @@ const accountInitial = computed(() => accountLabel.value.trim().charAt(0).toUppe
 
 function openSettings(): void {
   accountMenuOpen.value = false;
+  settingsMobileView.value = isMobile.value ? "list" : "detail";
   settingsOpen.value = true;
+}
+
+function openSettingsSection(section: "about" | "appearance"): void {
+  settingsSection.value = section;
+  settingsMobileView.value = "detail";
+}
+
+watch(isMobile, (mobile) => {
+  if (settingsOpen.value) settingsMobileView.value = mobile ? "list" : "detail";
+});
+
+function onSettingsTouchStart(event: TouchEvent): void {
+  settingsTouchStartX.value = event.changedTouches[0]?.clientX ?? null;
+}
+
+function onSettingsTouchEnd(event: TouchEvent): void {
+  const startX = settingsTouchStartX.value;
+  settingsTouchStartX.value = null;
+  const endX = event.changedTouches[0]?.clientX;
+  if (isMobile.value && settingsMobileView.value === "detail" && startX !== null && endX !== undefined && endX - startX > 60) {
+    settingsMobileView.value = "list";
+  }
 }
 
 onMounted(async () => {
