@@ -15,8 +15,18 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
   const userPlans = skipHydrate(ref<UserPlan[]>([]));
   const activePlanId = skipHydrate(ref<string | null>(null));
   const isHydrated = ref(false);
+  const saveError = ref<string | null>(null);
 
   const repo = usePlanRepository();
+  let retryPendingSave: (() => void) | undefined;
+
+  const dismissSaveError = () => {
+    saveError.value = null;
+  };
+
+  const retrySave = () => {
+    retryPendingSave?.();
+  };
 
   // Load persisted state from the active repository (localStorage or backend).
   // Driven explicitly from the app (after auth is known) rather than on store init.
@@ -40,6 +50,8 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
   if (import.meta.client) {
     let saveTimer: ReturnType<typeof setTimeout> | undefined;
     let pending: UserPlan | null = null;
+    let failedPlanId: string | null = null;
+    let failedPlanSnapshot: UserPlan | null = null;
 
     const flushSave = () => {
       if (saveTimer) clearTimeout(saveTimer);
@@ -47,16 +59,43 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
       if (pending) {
         const plan = pending;
         pending = null;
-        repo.updatePlan(plan).catch((e) =>
-          console.error("Failed to save plan:", e),
-        );
+        repo.updatePlan(plan)
+          .then(() => {
+            if (failedPlanId === plan.id) {
+              failedPlanId = null;
+              failedPlanSnapshot = null;
+              saveError.value = null;
+            }
+          })
+          .catch((e) => {
+            failedPlanId = plan.id;
+            failedPlanSnapshot = plan;
+            saveError.value =
+              "Your changes could not be saved. They may be lost if you reload the page.";
+            console.error("Failed to save plan:", e);
+          });
       }
     };
 
     const scheduleSave = (plan: UserPlan) => {
       pending = JSON.parse(JSON.stringify(plan));
+      // A new edit starts a new save attempt, so remove an old warning while
+      // the latest version is being persisted.
+      saveError.value = null;
       if (saveTimer) clearTimeout(saveTimer);
       saveTimer = setTimeout(flushSave, 500);
+    };
+
+    retryPendingSave = () => {
+      const plan = failedPlanId
+        ? userPlans.value.find((candidate) => candidate.id === failedPlanId) ??
+          failedPlanSnapshot
+        : null;
+      if (!plan) return;
+
+      saveError.value = null;
+      pending = JSON.parse(JSON.stringify(plan));
+      flushSave();
     };
 
     watch(
@@ -454,6 +493,9 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     totalPassedCp,
     totalRequiredCp,
     progressPercent,
+    saveError,
+    retrySave,
+    dismissSaveError,
     isHydrated,
     hydrate,
     isFutureSemester,

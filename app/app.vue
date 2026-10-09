@@ -39,6 +39,12 @@
       @set-accent="setAccent"
     />
     <LoadingOverlay :visible="isPageLoading" />
+    <SaveErrorNotice
+      v-if="store.saveError"
+      :message="store.saveError"
+      @retry="store.retrySave"
+      @dismiss="store.dismissSaveError"
+    />
   </div>
 </template>
 
@@ -51,6 +57,7 @@ import AppHeader from "./components/AppHeader.vue";
 import LoadingOverlay from "./components/LoadingOverlay.vue";
 import LoginScreen from "./components/LoginScreen.vue";
 import PlannerMobile from "./components/PlannerMobile.vue";
+import SaveErrorNotice from "./components/SaveErrorNotice.vue";
 import SettingsModal from "./components/SettingsModal.vue";
 import StudyPlanner from "./components/StudyPlanner.vue";
 import type { AccentColor } from "./types";

@@ -7,5 +7,8 @@ export default defineNitroPlugin(async () => {
     await migrate(useDb(), { migrationsFolder: "drizzle" });
   } catch (err) {
     console.error("[migrate] failed to apply migrations:", err);
+    // Do not let the server start against an unknown schema. A partially
+    // migrated database can otherwise look healthy while requests fail later.
+    throw err;
   }
 });
