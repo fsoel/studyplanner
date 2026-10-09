@@ -131,6 +131,7 @@
             >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
+              <option value="oled">Lights out</option>
             </select>
           </div>
         </div>

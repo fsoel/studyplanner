@@ -145,7 +145,7 @@
               :class="[
                 store.currentSemesterInfo.season === sem.season &&
                 store.currentSemesterInfo.year === sem.year
-                  ? 'bg-blue-50/70 dark:bg-blue-900/20'
+                  ? 'current-semester-highlight bg-blue-50/70 dark:bg-blue-900/20'
                   : 'bg-gray-50/50 dark:bg-gray-800/50',
               ]"
             >
@@ -331,7 +331,7 @@
                 row.isSummary ? 'align-middle' : 'align-top',
                 store.currentSemesterInfo.season === sem.season &&
                 store.currentSemesterInfo.year === sem.year
-                  ? 'bg-blue-50/30 dark:bg-blue-900/10'
+                  ? 'current-semester-highlight bg-blue-50/30 dark:bg-blue-900/10'
                   : 'bg-white dark:bg-gray-800/30',
               ]"
             >

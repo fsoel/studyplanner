@@ -8,10 +8,11 @@
       :is-authenticated="isAuthenticated"
       :is-backend="isBackend"
       :is-dark="isDark"
+      :theme-mode="themeMode"
       :account-label="accountLabel"
       :account-initial="accountInitial"
       :user-email="user?.email"
-      @toggle-dark="toggleDark"
+      @cycle-theme="cycleTheme"
       @open-settings="openSettings"
       @logout="logout"
     />
@@ -46,7 +47,13 @@ import PlannerMobile from "./components/PlannerMobile.vue";
 import SettingsModal from "./components/SettingsModal.vue";
 import StudyPlanner from "./components/StudyPlanner.vue";
 
-const colorMode = useColorMode();
+const colorMode = useColorMode({
+  modes: {
+    light: "",
+    dark: "dark",
+    oled: "dark oled",
+  },
+});
 const isDark = ref(false);
 let themeObserver: MutationObserver | undefined;
 
@@ -54,15 +61,22 @@ function syncThemeState(): void {
   isDark.value = document.documentElement.classList.contains("dark");
 }
 
-const themeMode = computed(() => colorMode.value === "dark" ? "dark" : "light");
-
-function toggleDark(): void {
-  colorMode.value = isDark.value ? "light" : "dark";
-  syncThemeState();
-}
+const themeMode = computed(() => {
+  if (colorMode.value === "oled") return "oled";
+  return colorMode.value === "dark" ? "dark" : "light";
+});
 
 function setTheme(value: string): void {
-  if (value === "light" || value === "dark") colorMode.value = value;
+  if (value === "light" || value === "dark" || value === "oled") colorMode.value = value;
+}
+
+function cycleTheme(): void {
+  const nextTheme = themeMode.value === "light"
+    ? "dark"
+    : themeMode.value === "dark"
+      ? "oled"
+      : "light";
+  setTheme(nextTheme);
 }
 
 const isMobile = useMediaQuery("(max-width: 767px)");
@@ -106,3 +120,39 @@ onMounted(async () => {
 
 onBeforeUnmount(() => themeObserver?.disconnect());
 </script>
+
+<style>
+/* Lights out keeps large neutral surfaces at true black for OLED displays. */
+html.oled,
+html.oled body {
+  background-color: #000;
+  color-scheme: dark;
+}
+
+html.oled [class~="dark:bg-gray-900"],
+html.oled [class~="dark:bg-gray-900/10"],
+html.oled [class~="dark:bg-gray-900/40"],
+html.oled [class~="dark:bg-gray-900/50"],
+html.oled [class~="dark:bg-gray-900/95"],
+html.oled [class~="dark:bg-gray-800"],
+html.oled [class~="dark:bg-gray-800/20"],
+html.oled [class~="dark:bg-gray-800/30"],
+html.oled [class~="dark:bg-gray-800/50"],
+html.oled [class~="dark:bg-gray-800/60"],
+html.oled [class~="dark:bg-gray-800/90"],
+html.oled [class~="dark:bg-gray-700"],
+html.oled [class~="dark:bg-gray-700/50"],
+html.oled [class~="dark:bg-gray-600"] {
+  background-color: #000 !important;
+}
+
+/* Sticky table cells use a dark gradient as a visual edge; keep that edge black too. */
+html.oled [class~="dark:after:from-gray-800"]::after {
+  --tw-gradient-from: #000 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
+}
+
+html.oled .current-semester-highlight {
+  background-color: #161616 !important;
+}
+</style>

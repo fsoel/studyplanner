@@ -39,14 +39,17 @@
 
       <button
         v-else
-        @click="$emit('toggle-dark')"
+        @click="$emit('cycle-theme')"
         type="button"
-        role="switch"
-        :aria-checked="isDark"
-        :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+        role="button"
+        :aria-label="nextThemeLabel"
         class="rounded-xl border border-gray-200 bg-gray-100 p-2.5 text-gray-700 transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
       >
-        <svg v-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg v-if="themeMode === 'oled'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="8" stroke-width="2" />
+          <path stroke-linecap="round" stroke-width="2" d="M8 8 16 16" />
+        </svg>
+        <svg v-else-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
         </svg>
         <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,19 +100,28 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { computed } from "vue";
+
+const props = defineProps<{
   isAuthenticated: boolean;
   isBackend: boolean;
   isDark: boolean;
+  themeMode: string;
   accountMenuOpen: boolean;
   accountLabel: string;
   accountInitial: string;
   userEmail?: string;
 }>();
 
+const nextThemeLabel = computed(() => {
+  if (props.themeMode === "light") return "Switch to dark mode";
+  if (props.themeMode === "dark") return "Switch to Lights out mode";
+  return "Switch to light mode";
+});
+
 defineEmits<{
   "update:accountMenuOpen": [value: boolean];
-  "toggle-dark": [];
+  "cycle-theme": [];
   "open-settings": [];
   logout: [];
 }>();
