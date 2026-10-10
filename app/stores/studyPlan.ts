@@ -269,6 +269,28 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     }
   };
 
+  const renamePlan = async (id: string, name: string) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+
+    const plan = userPlans.value.find((candidate) => candidate.id === id);
+    if (!plan) return;
+
+    plan.name = trimmedName;
+
+    // The regular deep watcher persists the active plan. Inactive plans do not
+    // pass through that watcher, so persist their renamed copy immediately.
+    if (import.meta.client && isHydrated.value && plan.id !== activePlanId.value) {
+      try {
+        await repo.updatePlan(plan);
+      } catch (e) {
+        saveError.value =
+          "Your changes could not be saved. They may be lost if you reload the page.";
+        console.error("Failed to save renamed plan:", e);
+      }
+    }
+  };
+
   const currentSemesterInfo = computed(() => {
     const now = new Date();
     const month = now.getMonth() + 1; // 1-indexed
@@ -503,6 +525,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     loadTemplates,
     createPlan,
     switchPlan,
+    renamePlan,
     deletePlan,
     addModule,
     updateModule,
