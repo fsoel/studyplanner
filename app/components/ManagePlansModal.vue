@@ -1,34 +1,17 @@
 <template>
-  <div
-    v-if="show"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4 py-10 overflow-y-auto"
+  <BaseModal
+    :show="show"
+    size="lg"
+    :show-close="canCancel"
+    :close-on-backdrop="canCancel"
+    aria-label="Manage plans"
+    @close="$emit('close')"
   >
-    <div
-      class="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl my-auto transform transition-all border border-gray-200 dark:border-gray-700"
-    >
-      <div class="flex justify-between items-center mb-6">
+    <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 sm:max-h-[calc(100dvh-4rem)] sm:p-8">
+      <div class="mb-6 pr-10">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
           Manage Plans
         </h2>
-        <button
-          v-if="canCancel"
-          @click="$emit('close')"
-          class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-100 transition-colors"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
       </div>
 
       <!-- Current Plans List -->
@@ -185,12 +168,13 @@
       @confirm="confirmDeletePlan"
       @cancel="planPendingDelete = null"
     />
-  </div>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useStudyPlanStore } from "../stores/studyPlan";
+import BaseModal from "./BaseModal.vue";
 import ConfirmModal from "./ConfirmModal.vue";
 
 const props = defineProps<{

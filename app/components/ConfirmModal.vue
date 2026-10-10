@@ -1,11 +1,6 @@
 <template>
-  <div
-    v-if="show"
-    class="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50 px-4 py-10"
-  >
-    <div
-      class="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800"
-    >
+  <BaseModal :show="show" size="md" aria-label="Confirmation" @close="$emit('cancel')">
+    <div class="p-6 pr-14">
       <div class="mb-5 flex items-start gap-4">
         <div
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-300"
@@ -49,10 +44,12 @@
         </button>
       </div>
     </div>
-  </div>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
+import BaseModal from "./BaseModal.vue";
+
 withDefaults(
   defineProps<{
     show: boolean;

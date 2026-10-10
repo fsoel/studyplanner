@@ -1,14 +1,8 @@
 <template>
-  <div
-    v-if="show"
-    class="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50 px-4 py-10"
-    @click.self="$emit('close')"
-  >
-    <div
-      class="w-full max-w-2xl rounded-xl border border-gray-200 bg-white p-4 sm:p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800"
-    >
+  <BaseModal :show="show" size="lg" aria-label="Progress overview" @close="$emit('close')">
+    <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:max-h-[calc(100dvh-4rem)] sm:p-6">
       <!-- Header -->
-      <div class="mb-4 flex items-start justify-between gap-4">
+      <div class="mb-4 flex items-start justify-between gap-4 pr-10">
         <div>
           <h2 class="text-lg font-bold text-gray-900 dark:text-white">
             Progress Overview
@@ -18,20 +12,6 @@
             schedule.
           </p>
         </div>
-        <button
-          @click="$emit('close')"
-          class="shrink-0 rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-          aria-label="Close"
-        >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
       </div>
 
       <!-- Summary stats -->
@@ -186,12 +166,13 @@
         This plan has no course template, so no recommended schedule is available.
       </p>
     </div>
-  </div>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useStudyPlanStore } from "../stores/studyPlan";
+import BaseModal from "./BaseModal.vue";
 
 defineProps<{ show: boolean }>();
 defineEmits<{ close: [] }>();

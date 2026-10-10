@@ -1,15 +1,12 @@
 <template>
-  <div
-    v-if="modelValue"
-    class="fixed inset-0 z-40 flex items-center justify-center bg-gray-950/50 p-4 backdrop-blur-sm"
-    @click.self="close"
+  <BaseModal
+    :show="modelValue"
+    size="xl"
+    window-class="flex h-[min(600px,calc(100dvh-2rem))] flex-col overflow-hidden sm:h-[min(600px,calc(100dvh-4rem))] sm:flex-row"
+    title-id="settings-title"
+    aria-label="Settings"
+    @close="close"
   >
-    <section
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="settings-title"
-      class="flex h-[min(600px,calc(100vh-2rem))] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800 sm:flex-row"
-    >
       <aside class="hidden w-52 shrink-0 border-r border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/50 sm:block">
         <p class="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Settings</p>
         <nav class="mt-3 max-h-40 overflow-y-auto sm:max-h-none sm:overflow-visible" aria-label="Settings sections">
@@ -41,7 +38,7 @@
       </aside>
 
       <div v-if="settingsMobileView === 'list'" class="flex min-h-0 flex-1 flex-col bg-gray-50 dark:bg-gray-900/50 sm:hidden">
-        <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+        <div class="border-b border-gray-200 px-5 py-4 pr-14 dark:border-gray-700">
           <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Settings</p>
           <h2 class="mt-1 text-xl font-bold">Settings</h2>
         </div>
@@ -83,7 +80,7 @@
           </svg>
           Settings
         </button>
-        <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 sm:px-7">
+        <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 pr-14 dark:border-gray-700 sm:px-7 sm:pr-14">
           <div>
             <p class="accent-text text-xs font-semibold uppercase tracking-wide">
               {{ settingsSection === 'about' ? 'About' : 'Appearance' }}
@@ -92,11 +89,6 @@
               {{ settingsSection === 'about' ? 'Study Planner' : 'Appearance' }}
             </h2>
           </div>
-          <button @click="close" type="button" aria-label="Close settings" class="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 6 12 12M6 18 18 6" />
-            </svg>
-          </button>
         </div>
 
         <div v-if="settingsSection === 'about'" class="p-5 sm:p-7">
@@ -156,14 +148,14 @@
           </div>
         </div>
       </div>
-    </section>
-  </div>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
 import { useMediaQuery } from "@vueuse/core";
 import { ref, watch } from "vue";
 import type { AccentColor } from "../types";
+import BaseModal from "./BaseModal.vue";
 
 const props = defineProps<{
   modelValue: boolean;

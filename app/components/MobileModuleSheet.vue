@@ -1,19 +1,21 @@
 <template>
-  <div
-    v-if="module"
-    class="fixed inset-0 z-[60] flex items-end justify-center bg-black/50"
-    @click.self="$emit('close')"
+  <BaseModal
+    :show="!!module"
+    size="md"
+    placement="bottom"
+    :window-style="dragStyle"
+    aria-label="Module actions"
+    window-class="overflow-hidden border-t border-gray-200 bg-white p-4 pb-8 shadow-2xl dark:border-gray-700 dark:bg-gray-800"
+    @close="$emit('close')"
   >
     <div
-      class="w-full max-w-md rounded-t-2xl border-t border-gray-200 bg-white p-4 pb-8 shadow-2xl dark:border-gray-700 dark:bg-gray-800"
-      :style="dragStyle"
       @touchstart.passive="onTouchStart"
       @touchmove="onTouchMove"
       @touchend.passive="onTouchEnd"
     >
       <div class="mx-auto mb-3 h-1.5 w-10 rounded-full bg-gray-300 dark:bg-gray-600"></div>
 
-      <div class="mb-3 flex items-baseline justify-between gap-3 px-1">
+      <div class="mb-3 flex items-baseline justify-between gap-3 px-1 pr-10">
         <h3 class="min-w-0 flex-1 truncate text-base font-bold text-gray-900 dark:text-white">
           {{ module.name }}
         </h3>
@@ -86,14 +88,15 @@
             >
           </button>
         </div>
-      </div>
     </div>
-  </div>
+    </div>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import type { Module } from "../types";
+import BaseModal from "./BaseModal.vue";
 
 const props = defineProps<{
   module: Module | null;
