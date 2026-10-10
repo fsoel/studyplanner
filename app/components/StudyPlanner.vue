@@ -128,6 +128,7 @@
     <!-- The Planner Grid -->
     <div
       v-if="store.activePlan"
+      ref="plannerScroller"
       class="overflow-auto flex-1 min-h-0 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 block"
     >
       <table class="w-full text-left border-collapse table-fixed">
@@ -141,6 +142,7 @@
             <th
               v-for="sem in store.semesters"
               :key="sem.id"
+              :data-sem-id="sem.id"
               class="min-w-[200px] w-[200px] xl:w-[240px] 2xl:w-[280px] p-3 xl:p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center relative group"
               :class="[
                 store.currentSemesterInfo.season === sem.season &&
@@ -508,7 +510,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import draggable from "vuedraggable";
 import { useStudyPlanStore } from "../stores/studyPlan";
 import {
@@ -530,6 +532,51 @@ const showEditModal = ref(false);
 const isDragging = ref(false);
 const showProgressOverview = ref(false);
 const semesterPendingRemove = ref<string | null>(null);
+
+// The grid is horizontally scrollable on narrower desktop viewports. Keep the
+// initial view useful without changing the user's position after they start
+// scrolling themselves.
+const plannerScroller = ref<HTMLElement | null>(null);
+const initialPositionApplied = ref(false);
+const positionCurrentSemester = () => {
+  if (!import.meta.client || initialPositionApplied.value) return;
+
+  void nextTick(() => {
+    requestAnimationFrame(() => {
+      if (initialPositionApplied.value) return;
+
+      const container = plannerScroller.value;
+      const currentSemester = store.semesters.find(
+        (sem) =>
+          sem.season === store.currentSemesterInfo.season &&
+          sem.year === store.currentSemesterInfo.year,
+      );
+      if (!container || !currentSemester) return;
+
+      const semesterCell = container.querySelector<HTMLElement>(
+        `[data-sem-id="${currentSemester.id}"]`,
+      );
+      if (!semesterCell) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const semesterRect = semesterCell.getBoundingClientRect();
+      const target =
+        container.scrollLeft +
+        semesterRect.left -
+        containerRect.left -
+        (container.clientWidth - semesterRect.width) / 2;
+      const maxScrollLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+
+      container.scrollLeft = Math.max(0, Math.min(target, maxScrollLeft));
+      initialPositionApplied.value = true;
+    });
+  });
+};
+
+watch(
+  () => [store.isHydrated, store.activePlanId, store.semesters.length],
+  positionCurrentSemester,
+);
 
 // Edit Modal state
 const modalModeCategoryId = ref("");
@@ -624,6 +671,7 @@ watch(
 );
 
 onMounted(() => {
+  positionCurrentSemester();
   ensureActivePlanOrPrompt();
 });
 

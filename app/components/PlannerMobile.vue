@@ -331,21 +331,61 @@ const step = (dir: number) => {
 
 // Keep the selected pill centered in the horizontal scroller.
 const pillScroller = ref<HTMLElement | null>(null);
-const centerSelectedPill = () => {
+const centerSelectedPill = (behavior: ScrollBehavior = "smooth") => {
   const container = pillScroller.value;
-  if (!container || !selectedSemesterId.value) return;
+  if (!container || !selectedSemesterId.value) return false;
   const el = container.querySelector<HTMLElement>(
     `[data-sem-id="${selectedSemesterId.value}"]`,
   );
-  if (!el) return;
+  if (!el) return false;
   const cRect = container.getBoundingClientRect();
   const eRect = el.getBoundingClientRect();
-  const delta =
-    eRect.left - cRect.left - (container.clientWidth - el.clientWidth) / 2;
-  container.scrollBy({ left: delta, behavior: "smooth" });
+  const target =
+    container.scrollLeft +
+    eRect.left -
+    cRect.left -
+    (container.clientWidth - el.clientWidth) / 2;
+  const maxScrollLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+
+  container.scrollTo({
+    left: Math.max(0, Math.min(target, maxScrollLeft)),
+    behavior,
+  });
+  return true;
 };
-watch(selectedSemesterId, () => nextTick(centerSelectedPill));
-onMounted(() => nextTick(centerSelectedPill));
+const hasMounted = ref(false);
+const initialPositionApplied = ref(false);
+
+const positionInitialSelectedPill = () => {
+  if (!hasMounted.value || initialPositionApplied.value || !import.meta.client) return;
+
+  void nextTick(() => {
+    requestAnimationFrame(() => {
+      if (initialPositionApplied.value) return;
+      initialPositionApplied.value = centerSelectedPill("auto");
+    });
+  });
+};
+
+// Position the initial view after hydration has rendered the semester pills.
+// Subsequent manual scrolling is intentionally left alone.
+watch(
+  () => [
+    store.isHydrated,
+    store.activePlanId,
+    store.semesters.length,
+    selectedSemesterId.value,
+  ],
+  positionInitialSelectedPill,
+);
+watch(selectedSemesterId, () => {
+  if (initialPositionApplied.value) void nextTick(() => centerSelectedPill());
+  else positionInitialSelectedPill();
+});
+onMounted(() => {
+  hasMounted.value = true;
+  positionInitialSelectedPill();
+});
 
 // Swipe left/right on the body to move between semesters.
 let touchStartX = 0;
