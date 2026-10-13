@@ -76,6 +76,7 @@ defineEmits(["edit"]);
 const props = defineProps<{
   module: Module;
   category: Category;
+  categoryColor?: string;
 }>();
 
 const store = useStudyPlanStore();
@@ -92,6 +93,7 @@ const cardClasses = computed(() => {
   }
 
   let base =
+    props.categoryColor ||
     props.category.color ||
     "bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200";
 

@@ -8,6 +8,36 @@ import type {
   UserPlan,
 } from "../types";
 import { usePlanRepository } from "../repositories";
+import {
+  findDescendantCategory,
+  moduleBelongsToCategoryNode,
+} from "../utils/courseCategories";
+import { validateCourseTemplates } from "../utils/courseTemplates";
+
+const normalizeSemesterNumber = (
+  value: number | string | null | undefined,
+): number | null => {
+  if (typeof value === "number") {
+    return Number.isInteger(value) && value >= 1 ? value : null;
+  }
+  if (typeof value !== "string") return null;
+
+  const match = /^(?:sem-)?(\d+)$/.exec(value);
+  if (!match) return null;
+  const number = Number(match[1]);
+  return Number.isInteger(number) && number >= 1 ? number : null;
+};
+
+const normalizePlanSemesterIds = (plan: UserPlan): UserPlan => ({
+  ...plan,
+  modules: plan.modules.map((module) => ({
+    ...module,
+    // Migrate plans saved before semester IDs became numeric.
+    semesterId: normalizeSemesterNumber(
+      module.semesterId as number | string | null,
+    ),
+  })),
+});
 
 export const useStudyPlanStore = defineStore("studyPlan", () => {
   const templates = ref<CourseTemplate[]>([]);
@@ -36,7 +66,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
       repo.getPlans(),
       repo.getActivePlanId(),
     ]);
-    userPlans.value = plans;
+    userPlans.value = plans.map(normalizePlanSemesterIds);
     activePlanId.value = activeId;
     isHydrated.value = true;
   };
@@ -146,7 +176,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
 
     for (let i = 0; i < config.numSemesters; i++) {
       sems.push({
-        id: `sem-${i + 1}`,
+        id: i + 1,
         label: `${currentSeason} ${currentSeason === "WS" ? `${currentYear % 100}/${(currentYear + 1) % 100}` : currentYear % 100}`,
         season: currentSeason,
         year: currentYear,
@@ -198,24 +228,23 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
       }
     };
 
-    for (const category of categories.value) {
-      if (category.subCategories?.length) {
-        // Subcategory caps apply first.
-        for (const subCategory of category.subCategories) {
-          const subCategoryModules = modules.filter(
-            (m) =>
-              m.categoryId === category.id &&
-              m.subCategoryId === subCategory.id,
-          );
-          applyMaxCap(subCategoryModules, subCategory.maxElectiveCp);
-        }
+    const applyCapsRecursively = (
+      root: Category,
+      node: Category,
+    ) => {
+      for (const child of node.subCategories || []) {
+        applyCapsRecursively(root, child);
       }
 
-      // Parent category cap is enforced across all modules in this category (including subcategories).
-      const categoryModules = modules.filter(
-        (m) => m.categoryId === category.id,
+      // A node's cap includes direct modules and every descendant module.
+      const nodeModules = modules.filter((module) =>
+        moduleBelongsToCategoryNode(module, root, node),
       );
-      applyMaxCap(categoryModules, category.maxElectiveCp);
+      applyMaxCap(nodeModules, node.maxElectiveCp);
+    };
+
+    for (const category of categories.value) {
+      applyCapsRecursively(category, category);
     }
     return modules;
   });
@@ -236,9 +265,15 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     try {
       const res = await fetch("/data/courses.json");
       const data = await res.json();
-      templates.value = data;
-      console.log("Templates loaded:", data.length);
-      return data;
+      const result = validateCourseTemplates(data);
+      if (!result.valid) {
+        console.error("Course template validation failed:", result.errors);
+        return [];
+      }
+
+      templates.value = result.templates;
+      console.log("Templates loaded:", result.templates.length);
+      return result.templates;
     } catch (e) {
       console.error("Failed to load templates:", e);
     }
@@ -256,7 +291,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     const plan = await repo.createPlan({
       name,
       courseTemplateId: templateId,
-      config: { startSeason, startYear, numSemesters: 6 },
+      config: { startSeason, startYear, numSemesters: templ.numSemesters },
       modules: templ.modules.map((m) => ({ ...m })), // deep copy modules
     });
     userPlans.value.push(plan);
@@ -313,7 +348,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     return { season, year: academicYear };
   });
 
-  const isFutureSemester = (semesterId: string | null) => {
+  const isFutureSemester = (semesterId: number | null) => {
     const sem = semesters.value.find((s) => s.id === semesterId);
     if (!sem) return false;
 
@@ -338,7 +373,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     return false;
   };
 
-  const isPastSemester = (semesterId: string | null) => {
+  const isPastSemester = (semesterId: number | null) => {
     const sem = semesters.value.find((s) => s.id === semesterId);
     if (!sem) return false;
 
@@ -370,9 +405,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
   ) => {
     if (!subCategoryId) return null;
     const category = categories.value.find((c) => c.id === categoryId);
-    return category?.subCategories?.some(
-      (subCategory) => subCategory.id === subCategoryId,
-    )
+    return category && findDescendantCategory(category, subCategoryId)
       ? subCategoryId
       : null;
   };
@@ -381,7 +414,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
     name: string,
     cp: number,
     categoryId: string,
-    semesterId: string,
+    semesterId: number,
     subCategoryId?: string | null,
   ) => {
     if (!activePlan.value) return;
@@ -415,7 +448,7 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
 
   const moveModule = (
     moduleId: string,
-    targetSemesterId: string,
+    targetSemesterId: number,
     targetCategoryId: string,
     targetSubCategoryId?: string | null,
   ) => {
@@ -469,33 +502,29 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
   const addSemester = () => {
     if (activePlan.value) {
       activePlan.value.config.numSemesters++;
-      return `sem-${activePlan.value.config.numSemesters}`;
+      return activePlan.value.config.numSemesters;
     }
-    return "";
+    return null;
   };
 
-  const removeSemester = (semId: string) => {
+  const removeSemester = (semId: number) => {
     if (!activePlan.value) return;
     const config = activePlan.value.config;
     if (config.numSemesters <= 1) return; // Prevent removing the last semester
 
-    const semNumStr = semId.split("-")[1];
-    if (!semNumStr) return;
-    const semNum = parseInt(semNumStr, 10);
+    const semNum = semId;
 
     // Shift modules appropriately
     activePlan.value.modules.forEach((m) => {
       if (!m.semesterId) return;
-      const mSemNumStr = m.semesterId.split("-")[1];
-      if (!mSemNumStr) return;
-      const mSemNum = parseInt(mSemNumStr, 10);
+      const mSemNum = m.semesterId;
 
       if (mSemNum === semNum) {
         // Move to previous semester, or if it is the first, move to sem-1
         const targetNum = semNum > 1 ? semNum - 1 : 1;
-        m.semesterId = `sem-${targetNum}`;
+        m.semesterId = targetNum;
       } else if (mSemNum > semNum) {
-        m.semesterId = `sem-${mSemNum - 1}`;
+        m.semesterId = mSemNum - 1;
       }
     });
 

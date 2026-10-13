@@ -109,17 +109,30 @@
         >
           <div class="mb-2 mt-3 flex items-center justify-between gap-2">
             <div
-              class="min-w-0 border-l-4 pl-2 text-sm font-bold [overflow-wrap:anywhere]"
+              class="flex min-w-0 flex-wrap items-center gap-1.5 border-l-4 pl-2 text-sm font-bold [overflow-wrap:anywhere]"
               :class="[
-                getCategoryHeaderClasses(entry.row.category.color),
-                entry.row.kind === 'subCategory' || entry.row.kind === 'direct'
-                  ? 'ml-3'
-                  : '',
+                getCategoryHeaderClasses(entry.row.categoryColor),
               ]"
+              :style="{ marginLeft: `${entry.row.depth * 0.75}rem` }"
             >
-              {{ entry.row.displayName }}
+              <span class="min-w-0 [overflow-wrap:anywhere]">{{ entry.row.displayName }}</span>
             </div>
-            <div class="flex shrink-0 items-center gap-2">
+            <div class="min-w-0 max-w-full flex shrink flex-wrap items-center justify-end gap-1.5">
+              <span
+                v-if="entry.row.requirement?.role === 'required'"
+                class="min-w-0 max-w-full rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-left text-[9px] font-bold uppercase tracking-wide text-amber-700 whitespace-normal [overflow-wrap:anywhere] dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
+                title="This subcategory is required by its parent category"
+              >Required</span>
+              <span
+                v-if="entry.row.requirement?.hasRequirements"
+                class="min-w-0 max-w-full rounded border border-gray-300 bg-white/70 px-1.5 py-0.5 text-left text-[9px] font-semibold tracking-wide text-gray-600 whitespace-normal [overflow-wrap:anywhere] dark:border-gray-600 dark:bg-gray-700/70 dark:text-gray-300"
+                title="Subcategory requirements for this category"
+              >{{ getRequirementSummary(entry.row.requirement) }}</span>
+              <span
+                v-if="entry.row.requirement?.minCpWaived"
+                class="min-w-0 max-w-full rounded border border-green-300 bg-green-50 px-1.5 py-0.5 text-left text-[9px] font-bold uppercase tracking-wide text-green-700 whitespace-normal [overflow-wrap:anywhere] dark:border-green-700 dark:bg-green-900/20 dark:text-green-300"
+                title="The required number of other eligible subcategories is fulfilled"
+              >Optional</span>
               <span
                 v-if="entry.row.maxCp !== undefined || entry.row.minCp !== undefined"
                 class="rounded-full px-2 py-0.5 text-[10px] font-bold"
@@ -138,7 +151,15 @@
             </div>
           </div>
 
-          <div class="space-y-2 pl-1">
+          <div
+            v-if="entry.row.isSummary"
+            class="flex items-center justify-between rounded-lg border border-dashed border-gray-200 px-3 py-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"
+          >
+            <span>Across subcategories</span>
+            <span class="font-bold">{{ rowTotalCp(entry.row) }} CP planned</span>
+          </div>
+
+          <div v-else class="space-y-2 pl-1">
             <button
               v-for="mod in entry.modules"
               :key="mod.id"
@@ -264,6 +285,7 @@ import {
   usePlannerRows,
   moduleBelongsToRow,
   getCategoryHeaderClasses,
+  getRequirementSummary,
   type PlannerRow,
 } from "../composables/usePlannerRows";
 import ManagePlansModal from "./ManagePlansModal.vue";
@@ -283,11 +305,11 @@ const modalSubCategoryId = ref<string | null>(null);
 const modalModuleId = ref<string | undefined>(undefined);
 
 const sheetModule = ref<Module | null>(null);
-const semesterPendingRemove = ref<string | null>(null);
+const semesterPendingRemove = ref<number | null>(null);
 const modulePendingDelete = ref<Module | null>(null);
 
 // --- Selected semester ---
-const selectedSemesterId = ref<string | null>(null);
+const selectedSemesterId = ref<number | null>(null);
 
 const currentSemesterId = computed(() => {
   const info = store.currentSemesterInfo;
@@ -406,7 +428,7 @@ const onTouchEnd = (e: TouchEvent) => {
   step(dx < 0 ? 1 : -1);
 };
 
-const semesterCp = (semId: string) =>
+const semesterCp = (semId: number) =>
   store.effectiveModules
     .filter((m) => m.semesterId === semId)
     .reduce((sum, m) => sum + m.cp, 0);
@@ -421,14 +443,20 @@ const semesterRows = computed(() => {
   const semId = selectedSemesterId.value;
   if (!semId) return [];
   return plannerRows.value
-    .filter((row) => !row.isSummary)
     .map((row) => ({
       row,
-      modules: store.effectiveModules.filter(
-        (m) => m.semesterId === semId && moduleBelongsToRow(m, row),
-      ),
+      modules: row.isSummary
+        ? []
+        : store.effectiveModules.filter(
+            (m) => m.semesterId === semId && moduleBelongsToRow(m, row),
+          ),
     }))
-    .filter((entry) => entry.row.canAddElective || entry.modules.length > 0);
+    .filter(
+      (entry) =>
+        (entry.row.isSummary && !!entry.row.requirement) ||
+        entry.row.canAddElective ||
+        entry.modules.length > 0,
+    );
 });
 
 const rowTotalCp = (row: PlannerRow) =>
@@ -464,7 +492,7 @@ const onSheetTogglePass = () => {
   if (sheetModule.value) store.togglePassed(sheetModule.value.id);
   sheetModule.value = null;
 };
-const onSheetMove = (targetSemesterId: string) => {
+const onSheetMove = (targetSemesterId: number) => {
   const mod = sheetModule.value;
   if (mod) {
     store.moveModule(mod.id, targetSemesterId, mod.categoryId, mod.subCategoryId ?? null);

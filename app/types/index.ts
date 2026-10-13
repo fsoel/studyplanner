@@ -5,19 +5,22 @@ export interface CpBoundedElective {
   maxElectiveCp?: number;
 }
 
-export interface ElectiveSubCategory extends CpBoundedElective {
-  id: string;
-  name: string;
+export interface SubCategoryRequirements {
+  requiredSubCategoryIds: string[];
+  eligibleSubCategoryIds: string[];
+  minEligibleSubCategories: number;
 }
 
-export interface Category {
+export interface Category extends CpBoundedElective {
   id: string;
   name: string;
   color: string;
-  minElectiveCp?: number;
-  maxElectiveCp?: number; // E.g. max 18 CP allowed across all elective modules in this category
-  subCategories?: ElectiveSubCategory[];
+  subCategories?: Category[];
+  subCategoryRequirements?: SubCategoryRequirements;
 }
+
+/** @deprecated Categories and subcategories now share the same recursive shape. */
+export type ElectiveSubCategory = Category;
 
 export interface Module {
   id: string;
@@ -25,13 +28,13 @@ export interface Module {
   cp: number;
   categoryId: string;
   subCategoryId?: string | null;
-  semesterId: string | null; // Can be a custom semester id or relative like 'sem-1'
+  semesterId: number | null; // 1-based semester number within the plan
   isPassed: boolean;
   isElective: boolean;
 }
 
 export interface Semester {
-  id: string;
+  id: number;
   label: string; // e.g. "WS 19/20" or "SS 20"
   season: "WS" | "SS";
   year: number; // The starting year, e.g., 2019 configures WS 19/20
@@ -42,6 +45,7 @@ export interface CourseTemplate {
   id: string;
   name: string;
   totalCp: number;
+  numSemesters: number;
   categories: Category[];
   modules: Module[];
 }

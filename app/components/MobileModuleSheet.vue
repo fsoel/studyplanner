@@ -100,15 +100,15 @@ import BaseModal from "./BaseModal.vue";
 
 const props = defineProps<{
   module: Module | null;
-  semesters: { id: string; label: string }[];
-  currentSemesterId: string | null;
+  semesters: { id: number; label: string }[];
+  currentSemesterId: number | null;
   canPass: boolean;
 }>();
 
 const emit = defineEmits<{
   close: [];
   togglePass: [];
-  move: [semesterId: string];
+  move: [semesterId: number];
   edit: [];
   delete: [];
 }>();

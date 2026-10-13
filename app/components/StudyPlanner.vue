@@ -234,17 +234,14 @@
               <div
                 class="font-bold text-sm tracking-tight mb-2 border-l-4 pl-3 min-w-0"
                 :class="[
-                  getCategoryHeaderClasses(row.category.color),
-                  row.kind === 'subCategory' || row.kind === 'direct'
-                    ? 'ml-4'
-                    : '',
+                  getCategoryHeaderClasses(row.categoryColor),
                 ]"
+                :style="{ marginLeft: `${row.depth * 1}rem` }"
               >
                 <div class="flex items-start justify-between gap-2 min-w-0">
-                  <span
-                    class="min-w-0 flex-1 [overflow-wrap:anywhere] leading-snug"
-                    >{{ row.displayName }}</span
-                  >
+                  <div class="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+                    <span class="min-w-0 [overflow-wrap:anywhere] leading-snug">{{ row.displayName }}</span>
+                  </div>
                   <button
                     v-if="row.canAddElective"
                     @click="
@@ -261,9 +258,33 @@
                 </div>
               </div>
               <div
-                v-if="row.minCp !== undefined || row.maxCp !== undefined"
+                v-if="row.minCp !== undefined || row.maxCp !== undefined || row.requirement"
                 class="text-xs font-normal mt-3 bg-white dark:bg-gray-700 p-2 rounded border border-gray-200 dark:border-gray-600 shadow-sm"
               >
+                <div
+                  v-if="
+                    row.requirement?.role === 'required' ||
+                    row.requirement?.hasRequirements ||
+                    row.requirement?.minCpWaived
+                  "
+                  class="mb-2 flex flex-wrap items-center justify-end gap-1.5 border-b border-gray-100 pb-2 dark:border-gray-600"
+                >
+                  <span
+                    v-if="row.requirement.role === 'required'"
+                    class="min-w-0 max-w-full rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-left text-[9px] font-bold uppercase tracking-wide text-amber-700 whitespace-normal [overflow-wrap:anywhere] dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
+                    title="This subcategory is required by its parent category"
+                  >Required</span>
+                  <span
+                    v-if="row.requirement.hasRequirements"
+                    class="min-w-0 max-w-full rounded border border-gray-300 bg-white/70 px-1.5 py-0.5 text-left text-[9px] font-semibold tracking-wide text-gray-600 whitespace-normal [overflow-wrap:anywhere] dark:border-gray-600 dark:bg-gray-700/70 dark:text-gray-300"
+                    title="Subcategory requirements for this category"
+                  >{{ getRequirementSummary(row.requirement) }}</span>
+                  <span
+                    v-if="row.requirement.minCpWaived"
+                    class="min-w-0 max-w-full rounded border border-green-300 bg-green-50 px-1.5 py-0.5 text-left text-[9px] font-bold uppercase tracking-wide text-green-700 whitespace-normal [overflow-wrap:anywhere] dark:border-green-700 dark:bg-green-900/20 dark:text-green-300"
+                    title="The required number of other eligible subcategories is fulfilled"
+                  >Optional</span>
+                </div>
                 <div
                   v-if="
                     row.minCp !== undefined &&
@@ -372,6 +393,7 @@
                     <ModuleCard
                       :module="element"
                       :category="row.category"
+                      :category-color="row.categoryColor"
                       @edit="
                         openEditModule(
                           element.id,
@@ -413,6 +435,7 @@
                     <ModuleCard
                       :module="element"
                       :category="row.category"
+                      :category-color="row.categoryColor"
                       @edit="
                         openEditModule(
                           element.id,
@@ -517,6 +540,7 @@ import {
   usePlannerRows,
   moduleBelongsToRow,
   getCategoryHeaderClasses,
+  getRequirementSummary,
   type PlannerRow,
 } from "../composables/usePlannerRows";
 import ModuleCard from "./ModuleCard.vue";
@@ -531,7 +555,7 @@ const showPlanManager = ref(false);
 const showEditModal = ref(false);
 const isDragging = ref(false);
 const showProgressOverview = ref(false);
-const semesterPendingRemove = ref<string | null>(null);
+const semesterPendingRemove = ref<number | null>(null);
 
 // The grid is horizontally scrollable on narrower desktop viewports. Keep the
 // initial view useful without changing the user's position after they start
@@ -612,7 +636,7 @@ const removeSemesterMessage = computed(() => {
   return `This will remove ${label}. Modules in that semester will be moved according to the planner's existing semester shift rules.`;
 });
 
-const requestRemoveSemester = (semesterId: string) => {
+const requestRemoveSemester = (semesterId: number) => {
   semesterPendingRemove.value = semesterId;
 };
 
@@ -703,16 +727,15 @@ watch(
   },
 );
 
-const getSemesterCpSum = (semId: string) => {
+const getSemesterCpSum = (semId: number) => {
   return store.effectiveModules
     .filter((m) => m.semesterId === semId)
     .reduce((sum, m) => sum + m.cp, 0);
 };
 
-const getRowModules = (row: PlannerRow, semesterId?: string) => {
+const getRowModules = (row: PlannerRow, semesterId?: number) => {
   return store.effectiveModules.filter((m) => {
     if (semesterId && m.semesterId !== semesterId) return false;
-    if (row.kind === "summary") return m.categoryId === row.category.id;
     return moduleBelongsToRow(m, row);
   });
 };
@@ -721,14 +744,14 @@ const getRowCpSum = (row: PlannerRow) => {
   return getRowModules(row).reduce((sum, m) => sum + m.cp, 0);
 };
 
-const getRowSemesterCpSum = (row: PlannerRow, semesterId: string) => {
+const getRowSemesterCpSum = (row: PlannerRow, semesterId: number) => {
   return getRowModules(row, semesterId).reduce((sum, m) => sum + m.cp, 0);
 };
 
 // Handle generic drag drops mapped back to the pinia store
 const onChange = (
   evt: any,
-  newSemId: string,
+  newSemId: number,
   newCatId: string,
   newSubCatId: string | null,
 ) => {
@@ -747,8 +770,10 @@ const onNewSemesterChange = (
 ) => {
   if (evt.added) {
     const mod = evt.added.element;
-    const newSemId = store.addSemester(); // Triggers store append and returns target id
-    store.moveModule(mod.id, newSemId, newCatId, newSubCatId);
+    const newSemId = store.addSemester(); // Triggers store append and returns target number
+    if (newSemId !== null) {
+      store.moveModule(mod.id, newSemId, newCatId, newSubCatId);
+    }
 
     const newSemesterBucket = localMatrix.value["new-semester"];
     if (newSemesterBucket) {

@@ -8,7 +8,7 @@ const moduleSchema = z.object({
   cp: z.number(),
   categoryId: z.string(),
   subCategoryId: z.string().nullable().optional(),
-  semesterId: z.string().nullable(),
+  semesterId: z.number().int().positive().nullable(),
   isPassed: z.boolean(),
   isElective: z.boolean(),
 });

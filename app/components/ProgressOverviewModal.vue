@@ -179,10 +179,9 @@ defineEmits<{ close: [] }>();
 
 const store = useStudyPlanStore();
 
-const semNum = (id: string | null | undefined): number | null => {
-  if (!id) return null;
-  const n = parseInt(id.split("-")[1] ?? "", 10);
-  return Number.isFinite(n) ? n : null;
+const semNum = (id: number | null | undefined): number | null => {
+  if (id === null || id === undefined) return null;
+  return Number.isInteger(id) && id >= 1 ? id : null;
 };
 
 const hasRecommendation = computed(

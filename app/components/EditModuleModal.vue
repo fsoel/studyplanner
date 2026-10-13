@@ -119,7 +119,7 @@ const props = defineProps<{
   moduleId?: string;
   categoryId: string; // The category we are adding to
   subCategoryId?: string | null;
-  defaultSemesterId?: string; // Preselected semester when adding (e.g. mobile view)
+  defaultSemesterId?: number; // Preselected semester when adding (e.g. mobile view)
 }>();
 
 const emit = defineEmits(["close"]);
@@ -128,13 +128,16 @@ const store = useStudyPlanStore();
 const form = ref({
   name: "New Elective",
   cp: 6,
-  semesterId: "",
+  semesterId: null as number | null,
 });
 const showDeleteConfirm = ref(false);
 
 const isEditing = computed(() => !!props.moduleId);
 const isValid = computed(
-  () => form.value.name.trim().length > 0 && form.value.cp > 0,
+  () =>
+    form.value.name.trim().length > 0 &&
+    form.value.cp > 0 &&
+    form.value.semesterId !== null,
 );
 const deleteModuleMessage = computed(() => {
   return `This will permanently delete "${form.value.name}" from your plan.`;
@@ -156,7 +159,7 @@ const syncForm = () => {
   form.value.name = "New Elective";
   form.value.cp = 6;
   form.value.semesterId =
-    props.defaultSemesterId ?? store.semesters[0]?.id ?? "";
+    props.defaultSemesterId ?? store.semesters[0]?.id ?? null;
 };
 
 watch(() => [props.show, props.moduleId], syncForm, { immediate: true });
@@ -165,11 +168,13 @@ const submit = () => {
   if (isEditing.value && props.moduleId) {
     store.updateModule(props.moduleId, form.value.name, form.value.cp);
   } else {
+    const semesterId = form.value.semesterId;
+    if (semesterId === null) return;
     store.addModule(
       form.value.name,
       form.value.cp,
       props.categoryId,
-      form.value.semesterId,
+      semesterId,
       props.subCategoryId,
     );
   }
