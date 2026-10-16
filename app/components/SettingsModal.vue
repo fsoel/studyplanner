@@ -40,7 +40,7 @@
       <div v-if="settingsMobileView === 'list'" class="flex min-h-0 flex-1 flex-col bg-gray-50 dark:bg-gray-900/50 sm:hidden">
         <div class="border-b border-gray-200 px-5 py-4 pr-14 dark:border-gray-700">
           <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Settings</p>
-          <h2 class="mt-1 text-xl font-bold">Settings</h2>
+          <h2 class="mt-1 text-xl font-bold" :class="{ 'text-gray-100': themeMode === 'dark' }">Settings</h2>
         </div>
         <nav class="overflow-y-auto p-3" aria-label="Settings sections">
           <button type="button" @click="openSection('appearance')" class="flex w-full items-center justify-between rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold text-gray-800 shadow-sm dark:bg-gray-800 dark:text-gray-100">
@@ -85,7 +85,7 @@
             <p class="accent-text text-xs font-semibold uppercase tracking-wide">
               {{ settingsSection === 'about' ? 'About' : 'Appearance' }}
             </p>
-            <h2 id="settings-title" class="mt-1 text-xl font-bold">
+            <h2 id="settings-title" class="mt-1 text-xl font-bold" :class="{ 'text-gray-100': themeMode === 'dark' }">
               {{ settingsSection === 'about' ? 'Study Planner' : 'Appearance' }}
             </h2>
           </div>
@@ -104,7 +104,7 @@
           <dl class="mt-6 border-t border-gray-100 pt-4 text-sm dark:border-gray-700">
             <div class="flex items-center justify-between gap-4">
               <dt class="text-gray-500 dark:text-gray-400">Current release</dt>
-              <dd class="font-semibold">{{ releaseVersion }}</dd>
+              <dd class="font-semibold" :class="{ 'text-gray-100': themeMode === 'dark' }">{{ releaseVersion }}</dd>
             </div>
           </dl>
         </div>
