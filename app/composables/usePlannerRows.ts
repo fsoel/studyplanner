@@ -118,7 +118,7 @@ export function usePlannerRows() {
         category.id,
         calculateCategoryRequirementProgress(
           category,
-          store.activePlan?.modules || [],
+          store.effectiveModules,
         ),
       );
     }

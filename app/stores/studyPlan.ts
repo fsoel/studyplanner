@@ -8,11 +8,9 @@ import type {
   UserPlan,
 } from "../types";
 import { usePlanRepository } from "../repositories";
-import {
-  findDescendantCategory,
-  moduleBelongsToCategoryNode,
-} from "../utils/courseCategories";
+import { findDescendantCategory } from "../utils/courseCategories";
 import { validateCourseTemplates } from "../utils/courseTemplates";
+import { calculateEffectiveModules } from "../utils/effectiveModules";
 
 const normalizeSemesterNumber = (
   value: number | string | null | undefined,
@@ -194,59 +192,12 @@ export const useStudyPlanStore = defineStore("studyPlan", () => {
 
   const effectiveModules = computed(() => {
     if (!activePlan.value) return [];
-    // Deep copy to not mutate the underlying data while recalculating CP
-    const modules = activePlan.value.modules.map((m) => ({ ...m }));
-    const semesterOrderById = new Map(
-      semesters.value.map((sem) => [sem.id, sem.orderIndex]),
+    return calculateEffectiveModules(
+      activePlan.value.modules,
+      categories.value,
+      semesters.value,
+      activeTemplate.value?.totalCp,
     );
-
-    const sortBySemesterOrder = (mods: Module[]) => {
-      return mods
-        .map((m, index) => ({
-          module: m,
-          orderIndex: m.semesterId
-            ? (semesterOrderById.get(m.semesterId) ?? 999)
-            : 999,
-          index,
-        }))
-        .sort((a, b) => a.orderIndex - b.orderIndex || a.index - b.index)
-        .map((item) => item.module);
-    };
-
-    const applyMaxCap = (mods: Module[], maxCap?: number) => {
-      if (maxCap === undefined) return;
-
-      let currentCpSum = 0;
-      for (const mod of sortBySemesterOrder(mods)) {
-        if (currentCpSum + mod.cp > maxCap) {
-          const remaining = Math.max(0, maxCap - currentCpSum);
-          mod.cp = remaining;
-          currentCpSum += remaining;
-        } else {
-          currentCpSum += mod.cp;
-        }
-      }
-    };
-
-    const applyCapsRecursively = (
-      root: Category,
-      node: Category,
-    ) => {
-      for (const child of node.subCategories || []) {
-        applyCapsRecursively(root, child);
-      }
-
-      // A node's cap includes direct modules and every descendant module.
-      const nodeModules = modules.filter((module) =>
-        moduleBelongsToCategoryNode(module, root, node),
-      );
-      applyMaxCap(nodeModules, node.maxElectiveCp);
-    };
-
-    for (const category of categories.value) {
-      applyCapsRecursively(category, category);
-    }
-    return modules;
   });
 
   const totalPassedCp = computed(() => {

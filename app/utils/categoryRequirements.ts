@@ -3,7 +3,7 @@ import { moduleBelongsToCategoryNode } from "./courseCategories";
 
 export interface CategoryRequirementProgress {
   categoryId: string;
-  plannedCp: number;
+  countedCp: number;
   minCpFulfilled: boolean;
   qualifies: boolean;
   requiredSubCategoriesFulfilled: number;
@@ -11,9 +11,9 @@ export interface CategoryRequirementProgress {
 }
 
 /**
- * Calculate recursive requirement progress using raw planned module CP.
- * Effective CP is intentionally not used here because max caps must not hide
- * planned work while requirements are being evaluated.
+ * Calculate recursive requirement progress using countable module CP.
+ * Modules selected after a category limit has been reached are voluntary and
+ * must not satisfy that category's requirements.
  */
 export function calculateCategoryRequirementProgress(
   root: Category,
@@ -22,11 +22,11 @@ export function calculateCategoryRequirementProgress(
   const progress = new Map<string, CategoryRequirementProgress>();
 
   const calculate = (node: Category): CategoryRequirementProgress => {
-    const plannedCp = modules
+    const countedCp = modules
       .filter((module) => moduleBelongsToCategoryNode(module, root, node))
       .reduce((sum, module) => sum + module.cp, 0);
     const minCpFulfilled =
-      node.minElectiveCp === undefined || plannedCp >= node.minElectiveCp;
+      node.minElectiveCp === undefined || countedCp >= node.minElectiveCp;
 
     for (const child of node.subCategories || []) calculate(child);
 
@@ -49,7 +49,7 @@ export function calculateCategoryRequirementProgress(
 
     const result: CategoryRequirementProgress = {
       categoryId: node.id,
-      plannedCp,
+      countedCp,
       minCpFulfilled,
       qualifies: minCpFulfilled && nestedRequirementsFulfilled,
       requiredSubCategoriesFulfilled,

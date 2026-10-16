@@ -466,9 +466,6 @@ const rowTotalCp = (row: PlannerRow) =>
 
 const capChipClasses = (row: PlannerRow) => {
   const total = rowTotalCp(row);
-  if (row.maxCp !== undefined && total > row.maxCp) {
-    return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300";
-  }
   if (row.minCp !== undefined && total < row.minCp) {
     return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300";
   }
