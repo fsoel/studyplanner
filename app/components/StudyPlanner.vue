@@ -1,7 +1,7 @@
 <template>
-  <div class="font-sans flex flex-col pt-4 flex-1 min-h-0">
+  <div class="planner-density font-sans flex flex-col pt-4 flex-1 min-h-0">
     <div
-      class="flex flex-wrap gap-3 lg:gap-6 mb-4 lg:mb-6 items-center bg-white dark:bg-gray-800 p-3 lg:p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full"
+      class="flex flex-wrap gap-3 min-[1920px]:gap-6 mb-4 min-[1920px]:mb-6 items-center bg-white dark:bg-gray-800 p-3 min-[1920px]:p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full"
     >
       <div v-if="store.activePlan" class="flex items-center gap-4">
         <div class="flex flex-col">
@@ -11,7 +11,7 @@
           >
           <select
             v-model="store.activePlanId"
-            class="accent-focus min-w-[220px] rounded-lg border bg-gray-50 p-2.5 text-sm font-semibold outline-none transition-all hover:border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500"
+            class="accent-focus min-w-[200px] min-[1920px]:min-w-[220px] rounded-lg border bg-gray-50 p-2.5 text-sm font-semibold outline-none transition-all hover:border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500"
           >
             <option
               v-for="plan in store.userPlans"
@@ -135,7 +135,7 @@
         <thead>
           <tr>
             <th
-              class="w-40 xl:w-48 p-3 xl:p-4 border-b-2 border-r-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 z-30 sticky left-0 text-center font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-sm shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
+              class="planner-category-column planner-category-header border-b-2 border-r-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 z-30 sticky left-0 text-center font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-sm shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
             >
               Categories
             </th>
@@ -143,7 +143,7 @@
               v-for="sem in store.semesters"
               :key="sem.id"
               :data-sem-id="sem.id"
-              class="min-w-[200px] w-[200px] xl:w-[240px] 2xl:w-[280px] p-3 xl:p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center relative group"
+              class="planner-semester-column planner-semester-header border-b-2 border-gray-200 dark:border-gray-700 text-center relative group"
               :class="[
                 store.currentSemesterInfo.season === sem.season &&
                 store.currentSemesterInfo.year === sem.year
@@ -152,7 +152,7 @@
               ]"
             >
               <div
-                class="font-bold text-gray-800 dark:text-gray-100 text-base xl:text-lg mb-1"
+                class="font-bold text-gray-800 dark:text-gray-100 text-base min-[1920px]:text-lg mb-1"
               >
                 {{ sem.label }}
               </div>
@@ -198,7 +198,7 @@
             </th>
             <!-- Add Semester Column Header -->
             <th
-              class="min-w-[200px] w-[200px] xl:w-[240px] 2xl:w-[280px] p-3 xl:p-5 border-b-2 border-gray-200 dark:border-gray-700 text-center bg-gray-50/20 dark:bg-gray-800/20 border-dashed border-l-2"
+              class="planner-semester-column planner-semester-header border-b-2 border-gray-200 dark:border-gray-700 text-center bg-gray-50/20 dark:bg-gray-800/20 border-dashed border-l-2"
             >
               <button
                 @click="store.addSemester"
@@ -229,7 +229,7 @@
             class="border-b border-gray-100 dark:border-gray-700/50 group/row"
           >
             <td
-              class="p-3 xl:p-5 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 sticky left-0 align-top z-20 shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
+              class="planner-category-column planner-category-cell border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 sticky left-0 align-top z-20 shadow-[10px_0_15px_-5px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_20px_-5px_rgba(0,0,0,0.3)] after:content-[''] after:absolute after:top-0 after:right-[-20px] after:w-[20px] after:h-full after:bg-gradient-to-r after:from-gray-50 after:to-transparent dark:after:from-gray-800 dark:after:to-transparent after:pointer-events-none"
             >
               <div
                 class="font-bold text-sm tracking-tight mb-2 border-l-4 pl-3 min-w-0"
@@ -336,7 +336,7 @@
             <td
               v-for="sem in store.semesters"
               :key="sem.id"
-              class="accent-hover-cell border-r border-gray-50 p-2 transition-colors dark:border-gray-700/30 xl:p-3"
+              class="planner-semester-cell accent-hover-cell border-r border-gray-50 p-2 transition-colors dark:border-gray-700/30"
               :class="[
                 row.isSummary ? 'align-middle' : 'align-top',
                 store.currentSemesterInfo.season === sem.season &&
@@ -374,7 +374,7 @@
                       row.subCategory?.id ?? null,
                     )
                   "
-                  class="min-h-[84px] xl:min-h-[120px] h-full"
+                  class="planner-dropzone min-h-[72px] h-full"
                 >
                   <template #item="{ element }">
                     <ModuleCard
@@ -395,7 +395,7 @@
             </td>
             <!-- Add Semester Column Dropzone -->
             <td
-              class="p-2 xl:p-3 align-top bg-gray-50/10 dark:bg-gray-900/10 border-l-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors"
+              class="planner-semester-cell p-2 align-top bg-gray-50/10 dark:bg-gray-900/10 border-l-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors"
             >
               <div v-if="row.isSummary" class="min-h-[52px]"></div>
               <ClientOnly v-else>
@@ -416,7 +416,7 @@
                       row.subCategory?.id ?? null,
                     )
                   "
-                  class="accent-dropzone-hover flex h-full min-h-[84px] flex-col items-center justify-center rounded-lg border-2 border-transparent transition-all xl:min-h-[120px]"
+                  class="planner-dropzone accent-dropzone-hover flex h-full min-h-[72px] flex-col items-center justify-center rounded-lg border-2 border-transparent transition-all"
                 >
                   <template #item="{ element }">
                     <ModuleCard
@@ -769,3 +769,53 @@ const onNewSemesterChange = (
   }
 };
 </script>
+
+<style scoped>
+.planner-density {
+  --planner-category-width: clamp(10rem, calc(8.3333vw + 5rem), 12rem);
+  --planner-semester-width: clamp(10.5rem, calc(16.6667vw - 2.5rem), 17.5rem);
+}
+
+.planner-density .planner-category-column {
+  width: var(--planner-category-width);
+  min-width: var(--planner-category-width);
+}
+
+.planner-density .planner-semester-column {
+  width: var(--planner-semester-width);
+  min-width: var(--planner-semester-width);
+}
+
+.planner-density .planner-category-header,
+.planner-density .planner-category-cell,
+.planner-density .planner-semester-header {
+  padding: 0.75rem;
+}
+
+.planner-density .planner-semester-cell {
+  padding: 0.5rem;
+}
+
+.planner-density .planner-dropzone {
+  min-height: 4.5rem;
+}
+
+@media (min-width: 1920px) {
+  .planner-density .planner-category-header {
+    padding: 1rem;
+  }
+
+  .planner-density .planner-category-cell,
+  .planner-density .planner-semester-header {
+    padding: 1.25rem;
+  }
+
+  .planner-density .planner-semester-cell {
+    padding: 0.75rem;
+  }
+
+  .planner-density .planner-dropzone {
+    min-height: 7.5rem;
+  }
+}
+</style>

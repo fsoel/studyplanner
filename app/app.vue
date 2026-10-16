@@ -17,7 +17,14 @@
       @logout="logout"
     />
 
-    <main class="flex-1 p-3 lg:p-6 overflow-hidden flex flex-col">
+    <main
+      class="flex-1 overflow-hidden flex flex-col"
+      :class="
+        isAuthenticated
+          ? 'p-3 lg:p-4 min-[1920px]:p-6'
+          : 'p-3 lg:p-6'
+      "
+    >
       <template v-if="isAuthenticated">
         <PlannerMobile v-if="isMobile" />
         <StudyPlanner v-else />

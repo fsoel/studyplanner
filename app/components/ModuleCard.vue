@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-2 xl:p-3 border rounded-lg shadow-sm text-sm mb-2 transition-all hover:shadow-md relative group/card"
+    class="p-2 min-[1920px]:p-3 border rounded-lg shadow-sm text-sm mb-2 transition-all hover:shadow-md relative group/card"
     :class="cardClasses"
     @click="store.togglePassed(module.id)"
     :title="
