@@ -92,15 +92,21 @@
         </div>
 
         <div v-if="settingsSection === 'about'" class="p-5 sm:p-7">
-          <div class="flex items-start justify-between gap-4">
-            <p class="max-w-xl text-sm leading-6 text-gray-600 dark:text-gray-300">
-              Study Planner helps you organize your modules, semesters, and progress in one place.
-              Your plans stay available across devices when you are signed in.
-            </p>
-            <span class="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-              v{{ releaseVersion }}
-            </span>
-          </div>
+          <p class="max-w-xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+            Study Planner helps you organize your modules, semesters, and progress in one place.
+            Your plans stay available across devices when you are signed in.
+          </p>
+          <a
+            href="https://github.com/fsoel/studyplanner"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-5 inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            GitHub repository
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7v7m-1-6L10 14M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
           <dl class="mt-6 border-t border-gray-100 pt-4 text-sm dark:border-gray-700">
             <div class="flex items-center justify-between gap-4">
               <dt class="text-gray-500 dark:text-gray-400">Current release</dt>
