@@ -318,7 +318,11 @@ html[data-accent="green"] .accent-planned-stroke {
   background-color: rgb(var(--accent-50) / 0.3);
 }
 
-.dark .accent-hover-cell:hover {
+.dark:not(.oled) .accent-hover-cell:hover {
+  background-color: rgb(var(--accent-900) / 0.1);
+}
+
+html.oled .accent-hover-cell:hover {
   background-color: rgb(var(--accent-700) / 0.5);
 }
 
