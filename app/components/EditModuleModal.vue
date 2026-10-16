@@ -137,7 +137,7 @@ const isValid = computed(
   () =>
     form.value.name.trim().length > 0 &&
     form.value.cp > 0 &&
-    form.value.semesterId !== null,
+    (isEditing.value || form.value.semesterId !== null),
 );
 const deleteModuleMessage = computed(() => {
   return `This will permanently delete "${form.value.name}" from your plan.`;
@@ -165,6 +165,8 @@ const syncForm = () => {
 watch(() => [props.show, props.moduleId], syncForm, { immediate: true });
 
 const submit = () => {
+  if (!isValid.value) return;
+
   if (isEditing.value && props.moduleId) {
     store.updateModule(props.moduleId, form.value.name, form.value.cp);
   } else {
